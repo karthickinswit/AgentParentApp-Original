@@ -1,16 +1,7 @@
-import React, {useEffect, useState, useContext, useRef} from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  Image,
-  TouchableOpacity,
-  ScrollView,
-  useWindowDimensions,
-  Animated,
-} from 'react-native';
+import React, {useEffect, useState, useContext} from 'react';
+import {View, Text, Image, TouchableOpacity, ScrollView} from 'react-native';
 import {Tab, TabView} from '@rneui/themed';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 
 import {messageService} from '../services/websocket';
 
@@ -20,74 +11,37 @@ import {
   MenuOption,
   MenuTrigger,
   MenuProvider,
-  MenuActions,
-  renderers,
 } from 'react-native-popup-menu';
 import {GlobalContext} from '../utils/globalupdate';
 import {activeChats, closedChats, suspendedChats} from '../services/api';
-import {ActivityIndicator} from 'react-native-paper';
-import {SafeAreaView} from 'react-native-safe-area-context';
-let menuRef = React.useRef(null);
+
 let elementRef = React.createRef();
-let Memo = () => {
-  const navigation = useNavigation();
-  console.log('Side menu Clicrked');
-  return <Text></Text>;
-};
-let NotifyModal = () => {
-  const navigation = useNavigation();
-  console.log('Side menu Clicrked');
-  return (
-    <MenuOptions
-      optionsContainerStyle={{
-        paddingLeft: 40,
-        height: 180,
-        width: 150,
-        flexDirection: 'column',
-        borderRadius: 15,
-        alignContent: 'flex-start',
-      }}>
-      <MenuOption style={{}} onSelect={() => alert('No New chats')}>
-        <Text style={styles.statusText}>New Chats - 0</Text>
-      </MenuOption>
-      <MenuOption
-        onSelect={() => alert('No Transferred Chats')}
-        disabled={true}>
-        <Text style={styles.statusText}>Transferred Chat</Text>
-      </MenuOption>
-      <MenuOption
-        onSelect={() => {
-          navigation.replace('JustInTime');
-        }}>
-        <Text style={styles.statusText}>Just In Time</Text>
-      </MenuOption>
-    </MenuOptions>
-  );
-};
+
 let ChatHeader = () => {
   const [blink, setBlink] = useState(true);
-  const navigation = useNavigation();
-
-  const [index, setIndex] = React.useState(0);
   const value = useContext(GlobalContext);
-  console.log('Header', JSON.stringify(value));
-  const [emptyState, setEmptyState] = useState({});
-  const isNotifyMenu = useRef(false);
   useEffect(() => {
-    // Change the state every second or the time given by User.
     let interval = new setInterval(() => {
       setBlink(blink => !blink);
-      // blink.current = blink.current ? true : false;
-      // setEmptyState(blink.current);
     }, 400);
     return () => clearInterval(interval);
   }, []);
 
-  // useEffect(() => {}, [emptyState]);
+  const navigation = useNavigation();
+
+  const handlePress = () => {
+    navigation.navigate('BlankPage');
+  };
 
   return (
     <View style={[styles.header]} ref={elementRef}>
       <View style={styles.left}>
+        <TouchableOpacity onPress={handlePress}>
+          <Image
+            source={require('../../assets/chevron-left-solid.png')}
+            style={styles.icon}
+          />
+        </TouchableOpacity>
         <Image
           source={require('../../assets/twixor_hd_icon.png')}
           style={styles.logo}
@@ -259,6 +213,7 @@ let ChatHeader = () => {
     </View>
   );
 };
+
 const ActiveChats = () => {
   const navigation = useNavigation();
   // setTimeout(() => {

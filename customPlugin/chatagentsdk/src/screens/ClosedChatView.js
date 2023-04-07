@@ -211,36 +211,73 @@ const ClosedChatView = route => {
         attachment: {},
         pickup: false,
       };
+      console.log('send Object', sendObject);
       messageService.sendMessage(sendObject);
       setMessage('');
     };
 
     return (
-      <SafeAreaView style={{backgroundColor: 'white'}}>
-        <View style={styles.footerContainer}>
-          <TouchableOpacity style={styles.attachmentButton}>
-            <Image
-              source={require('../../assets/add_128.png')}
-              style={styles.attachmentIcon}
+      // <SafeAreaView style={{backgroundColor: 'white'}}>
+      //   <View style={styles.footerContainer}>
+      //     <TouchableOpacity style={styles.attachmentButton}>
+      //       <Image
+      //         source={require('../../assets/add_128.png')}
+      //         style={styles.attachmentIcon}
+      //       />
+      //     </TouchableOpacity>
+      //     <TextInput
+      //       style={styles.input}
+      //       value={message}
+      //       onChangeText={setMessage}
+      //       placeholder="Type a message"
+      //       multiline
+      //     />
+      //     <TouchableOpacity
+      //       style={styles.sendButton}
+      //       onPress={handleSendMessage}>
+      //       <Image
+      //         source={require('../../assets/send_128.png')}
+      //         style={styles.sendIcon}
+      //       />
+      //     </TouchableOpacity>
+      //   </View>
+      // </SafeAreaView>
+      <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <SafeAreaView style={{backgroundColor: 'white'}}>
+          <View style={styles.footercontainer}>
+            {message.length > 0 ? null : (
+              <TouchableOpacity
+                style={styles.attachmentButton}
+                onPress={() => setModalVisible(true)}>
+                <Image
+                  source={require('../../assets/add_128.png')}
+                  style={styles.attachmentIcon}
+                />
+              </TouchableOpacity>
+            )}
+            <TextInput
+              style={styles.input}
+              value={message}
+              onChangeText={setMessage}
+              placeholder="Type a message"
+              multiline
             />
-          </TouchableOpacity>
-          <TextInput
-            style={styles.input}
-            value={message}
-            onChangeText={setMessage}
-            placeholder="Type a message"
-            multiline
-          />
-          <TouchableOpacity
-            style={styles.sendButton}
-            onPress={handleSendMessage}>
-            <Image
-              source={require('../../assets/send_128.png')}
-              style={styles.sendIcon}
-            />
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
+            {message.length > 0 ? (
+              <TouchableOpacity
+                style={styles.sendButton}
+                onPress={handleSendMessage}>
+                <Image
+                  source={require('../../assets/send_128.png')}
+                  style={styles.sendIcon}
+                />
+              </TouchableOpacity>
+            ) : null}
+          </View>
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
     );
   };
 
@@ -248,6 +285,7 @@ const ClosedChatView = route => {
     <>
       <ChatHeader />
       <ChatBody />
+      <ChatFooter />
     </>
   );
 };
@@ -333,10 +371,48 @@ let styles = StyleSheet.create({
     marginTop: 4,
     alignSelf: 'flex-end',
   },
-  footerContainer: {
+  // footerContainer: {
+  //   position: 'absolute',
+  //   width : "100%",
+  //   flexDirection: 'row',
+  //   alignItems: 'stretch',
+  //   backgroundColor: '#FFFFFF',
+  //   paddingVertical: 8,
+  //   paddingHorizontal: 16,
+  // },
+  // attachmentButton: {
+  //   marginRight: 16,
+  // },
+  // attachmentIcon: {
+  //   width: 24,
+  //   height: 24,
+  // },
+  // input: {
+  //   flex: 1,
+  //   backgroundColor: '#F2F2F2',
+  //   borderRadius: 16,
+  //   paddingHorizontal: 16,
+  //   paddingVertical: 8,
+  //   maxHeight: 150,
+  // },
+  // sendButton: {
+  //   marginLeft: 16,
+  // },
+  // sendIcon: {
+  //   width: 24,
+  //   height: 24,
+  // },
+  // statusText: {
+  //   fontSize: 12,
+  //   fontWeight: '600',
+  //   color: '#555555',
+  //   marginTop: 8,
+  // },
+  footercontainer: {
     position: 'absolute',
+    bottom: 0,
     flexDirection: 'row',
-    alignItems: 'stretch',
+    alignItems: 'center',
     backgroundColor: '#FFFFFF',
     paddingVertical: 8,
     paddingHorizontal: 16,
@@ -363,11 +439,16 @@ let styles = StyleSheet.create({
     width: 24,
     height: 24,
   },
-  statusText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#555555',
-    marginTop: 8,
+  rightContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    flexGrow: 1,
+  },
+  icon: {
+    width: 24,
+    height: 24,
+    marginHorizontal: 10,
   },
 });
 

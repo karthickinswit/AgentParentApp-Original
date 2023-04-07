@@ -17,9 +17,10 @@ import {LogBox} from 'react-native';
 
 export const ThemeContext = React.createContext({});
 export default function ChatParent() {
+  
   const Stack = createStackNavigator();
-
   LogBox.ignoreAllLogs();
+
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -42,6 +43,7 @@ export default function ChatParent() {
     </NavigationContainer>
   );
 }
+
 LoginScreen = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -125,7 +127,7 @@ LoginScreen = () => {
   );
 };
 
-const BlankPage = ({route}) => {
+BlankPage = ({route}) => {
   const navigation = useNavigation();
   let chat = {};
 

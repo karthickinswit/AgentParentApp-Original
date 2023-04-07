@@ -240,8 +240,7 @@ const IndividualChat = route => {
             <View style={styles.footercontainer}>
               {message.length > 0 ? null : (
                 <TouchableOpacity
-                  style={styles.attachmentButton}
-                  onPress={() => setModalVisible(true)}>
+                  style={styles.attachmentButton}>
                   <Image
                     source={require('../../assets/add_128.png')}
                     style={styles.attachmentIcon}

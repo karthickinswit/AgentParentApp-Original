@@ -1,9 +1,4 @@
-import React, {
-  useEffect,
-  useState,
-  useContext,
-  useRef,
-} from 'react';
+import React, {useEffect, useState, useContext, useRef} from 'react';
 import {
   View,
   Text,
@@ -26,20 +21,18 @@ import {
   MenuTrigger,
   MenuProvider,
   MenuActions,
-  renderers
+  renderers,
 } from 'react-native-popup-menu';
 import {GlobalContext} from '../utils/globalupdate';
 import {activeChats, closedChats, suspendedChats} from '../services/api';
 import {ActivityIndicator} from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {SafeAreaView} from 'react-native-safe-area-context';
 let menuRef = React.useRef(null);
 let elementRef = React.createRef();
 let Memo = () => {
   const navigation = useNavigation();
   console.log('Side menu Clicrked');
-  return (
-    <Text></Text>
-  );
+  return <Text></Text>;
 };
 let NotifyModal = () => {
   const navigation = useNavigation();
@@ -72,7 +65,7 @@ let NotifyModal = () => {
   );
 };
 let ChatHeader = () => {
-  const[blink,setBlink] =useState(true);
+  const [blink, setBlink] = useState(true);
   const navigation = useNavigation();
 
   const [index, setIndex] = React.useState(0);
@@ -83,14 +76,14 @@ let ChatHeader = () => {
   useEffect(() => {
     // Change the state every second or the time given by User.
     let interval = new setInterval(() => {
-       setBlink(blink => !blink);
-     // blink.current = blink.current ? true : false;
-     // setEmptyState(blink.current);
+      setBlink(blink => !blink);
+      // blink.current = blink.current ? true : false;
+      // setEmptyState(blink.current);
     }, 400);
     return () => clearInterval(interval);
   }, []);
 
- // useEffect(() => {}, [emptyState]);
+  // useEffect(() => {}, [emptyState]);
 
   return (
     <View style={[styles.header]} ref={elementRef}>
@@ -108,14 +101,10 @@ let ChatHeader = () => {
         </View>
       </View>
       <View style={[styles.right]}>
-        <Image
-          source={require('../../assets/search_64.png')}
-          style={styles.icon}
-        />
         <Menu
           style={{backfaceVisibility: 'visible'}}
           name="notifyMenu"
-          onBackdropPress={console.log('on close menu')}  >
+          onBackdropPress={console.log('on close menu')}>
           <MenuTrigger onPress={console.log('Bell icon pressed')}>
             <View style={styles.badgeSetup}>
               <Image
@@ -157,13 +146,11 @@ let ChatHeader = () => {
             ref={elementRef}
             optionsContainerStyle={{
               paddingLeft: 10,
-              paddingTop: 20,
               height: 200,
               width: 150,
               flexDirection: 'column',
               borderRadius: 15,
-              opacity:5,
-              
+              opacity: 5,
               alignContent: 'flex-start',
               backgroundColor: '#b3e1e8',
               borderStyle: 'solid',
@@ -218,36 +205,28 @@ let ChatHeader = () => {
           </MenuOptions>
         </Menu>
 
-        
-      
-            
-          
-          
-          <Menu
-      name="SideMenu"
-      onOpen={console.log('Menu opened')}
-      onBackdropPress={console.log('On menu closed')}
-      style={{
-        paddingTop:8,
-        paddingRight:10
-      
-      }}>
-      <MenuTrigger>
-        <Image
-          source={require('../../assets/inside_menu_64.png')}
-          style={{height: 30, width: 8}}
-        />
-      </MenuTrigger>
-      <MenuOptions
-        optionsContainerStyle={{
-          
-          height: 60,
-          width: 130,
-          flexDirection: 'column',
-          borderRadius: 15,
-          
-        }}>
-        {/* <MenuOption style={{}} onSelect={() => alert('No New chats')}>
+        <Menu
+          name="SideMenu"
+          onOpen={console.log('Menu opened')}
+          onBackdropPress={console.log('On menu closed')}
+          style={{
+            paddingTop: 8,
+            paddingRight: 10,
+          }}>
+          <MenuTrigger>
+            <Image
+              source={require('../../assets/inside_menu_64.png')}
+              style={styles.icon}
+            />
+          </MenuTrigger>
+          <MenuOptions
+            optionsContainerStyle={{
+              height: 60,
+              width: 130,
+              flexDirection: 'column',
+              borderRadius: 15,
+            }}>
+            {/* <MenuOption style={{}} onSelect={() => alert('No New chats')}>
           <Text style={styles.statusText}>New Chats - 0</Text>
         </MenuOption>
         <MenuOption
@@ -255,53 +234,54 @@ let ChatHeader = () => {
           disabled={true}>
           <Text style={styles.statusText}>Transferred Chat</Text>
         </MenuOption> */}
-        <MenuOption
-          onSelect={() => {
-            navigation.replace('JustInTime');
-          }}>
-          <View style={{paddingVertical: 15,
-            paddingHorizontal: 10,
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center"}}>
-          <Text style={styles.leftMenuOptionText}>Just In Time</Text>
-          <Image
-          source={require('../../assets/linkicon.png')}
-          style={{height: 20, width: 16,paddingRight:10}}
-        />
-          </View>
-        </MenuOption>
-      </MenuOptions>
-    </Menu>
-        </View>
+            <MenuOption
+              onSelect={() => {
+                navigation.replace('JustInTime');
+              }}>
+              <View
+                style={{
+                  paddingVertical: 15,
+                  paddingHorizontal: 10,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}>
+                <Text style={styles.leftMenuOptionText}>Just In Time</Text>
+                <Image
+                  source={require('../../assets/linkicon.png')}
+                  style={{height: 20, width: 16, paddingRight: 10}}
+                />
+              </View>
+            </MenuOption>
+          </MenuOptions>
+        </Menu>
       </View>
-    
+    </View>
   );
 };
 const ActiveChats = () => {
   const navigation = useNavigation();
   // setTimeout(() => {
   const value = useContext(GlobalContext);
-  const [activeChatList, setActiveChatList] = useState(()=>{
+  const [activeChatList, setActiveChatList] = useState(() => {
     activeChats()
-    .then(data => {
-      console.log('active data-->', data);
-       
+      .then(data => {
+        console.log('active data-->', data);
 
-      var users=data.users;
-      var chats=data.chats;
+        var users = data.users;
+        var chats = data.chats;
 
-      value.activeChatList.current = {users,chats}
+        value.activeChatList.current = {users, chats};
 
-      console.log('Chats in Global update2', value.activeChatList.current);
-    })
-    .catch(error => console.error('Error:', error));
+        console.log('Chats in Global update2', value.activeChatList.current);
+      })
+      .catch(error => console.error('Error:', error));
   });
   console.log('Active chat tab-->', value);
 
   // useEffect(() => {
   //   if (value.activeChatList.current.length <= 0) {
-      
+
   //   }
   // });
 
@@ -310,110 +290,21 @@ const ActiveChats = () => {
   }, [tempList]);
   if ('chats' in tempList.current) {
     console.log('ChatList', JSON.stringify(tempList.current.chats));
-    return (<ScrollView>
-    { 
-      tempList.current.chats.map((item, index) => {
-      return (
-        <TouchableOpacity
-          key={index}
-          onPress={() => {
-            //navigation.setParams({'chats':item});
-            navigation.replace('IndividualChat', {chatId: item.chatId});
-          }}>
-          <View style={styles.item}>
-            <Image source={{uri: item.customerIconUrl}} style={styles.avatar} />
-            <View style={styles.details}>
-              <Text style={styles.name}>{item.customerName}</Text>
-              <Text style={styles.lastMessage} key={index}>
-                {item.messages[item.messages.length - 1].message}
-              </Text>
-            </View>
-            <View style={styles.info}>
-              <Text style={styles.time}>{item.time}</Text>
-              {item.unreadCount > 0 && (
-                <View style={styles.unreadBadge}>
-                  <Text style={styles.unreadCount}>{item.unreadCount}</Text>
-                </View>
-              )}
-            </View>
-          </View>
-        </TouchableOpacity>
-      );
-    })}
-    </ScrollView>)
-  } else {
-    return <Text> Loading.....</Text>;
-  }
-};
-
-
-const SuspendedChats = () => {
-  const navigation = useNavigation();
-  // setTimeout(() => {
- // const value = useContext(GlobalContext);
-  //const [activeChatList, setActiveChatList] = useState([]);
-   console.log('Suspended chat tab-->');
-  // const tempList1;
- const [tempList1,setTempList1]=useState(()=>{
-       suspendedChats()
-        .then(data => {
-          console.log('suspended data-->', data);
-          setTempList1(data.chats)
-
-          //value.closedChatList.current = data.chats;
-
-          //console.log('closed Chats in Global update2', value.closedChatList.current);
-        })
-        .catch(error => console.error('Error:', error));
-    
- });
- useEffect(()=>{
-  
- },[tempList1])
-  // useEffect(() => {
-  //   if (value.closedChatList.current.length <= 0) {
-  //     closedChats()
-  //       .then(data => {
-  //         console.log('close data-->', data);
-
-  //         //value.closedChatList.current = data.chats;
-
-  //         console.log('closed Chats in Global update2', value.closedChatList.current);
-  //       })
-  //       .catch(error => console.error('Error:', error));
-  //   }
-  // });
-
-  // const tempList = React.useMemo(() => {
-  //   return value.closedChatList;
-  // }, [tempList]);
-  
-  if (tempList1) {
-    //console.log('ChatList', JSON.stringify(tempList.current));
     return (
-    <ScrollView
-   
-   
-  >
-  {/* <Text> Loading.....</Text> */}
-  {tempList1.map((item, index) => {
-      return (
-
-        <TouchableOpacity
+      <ScrollView>
+        {tempList.current.chats.map((item, index) => {
+          return (
+            <TouchableOpacity
               key={index}
               onPress={() => {
-               // navigation.navigate('ClosedChatView', {item});
+                //navigation.setParams({'chats':item});
+                navigation.replace('IndividualChat', {chatId: item.chatId});
               }}>
               <View style={styles.item}>
-              { item.customerIconUrl?
                 <Image
                   source={{uri: item.customerIconUrl}}
                   style={styles.avatar}
-                />:<Image
-                  source={require('../../assets/boy_dummy.png')}
-                  style={styles.avatar}
                 />
-              }
                 <View style={styles.details}>
                   <Text style={styles.name}>{item.customerName}</Text>
                   <Text style={styles.lastMessage} key={index}>
@@ -422,43 +313,43 @@ const SuspendedChats = () => {
                 </View>
                 <View style={styles.info}>
                   <Text style={styles.time}>{item.time}</Text>
-                  
+                  {item.unreadCount > 0 && (
+                    <View style={styles.unreadBadge}>
+                      <Text style={styles.unreadCount}>{item.unreadCount}</Text>
+                    </View>
+                  )}
                 </View>
               </View>
             </TouchableOpacity>
-      );
-    })}
-    </ScrollView>);
+          );
+        })}
+      </ScrollView>
+    );
   } else {
     return <Text> Loading.....</Text>;
   }
-  
 };
 
-
-const ClosedChats = () => {
+const SuspendedChats = () => {
   const navigation = useNavigation();
   // setTimeout(() => {
- // const value = useContext(GlobalContext);
+  // const value = useContext(GlobalContext);
   //const [activeChatList, setActiveChatList] = useState([]);
-   console.log('close chat tab-->');
+  console.log('Suspended chat tab-->');
   // const tempList1;
- const [tempList1,setTempList1]=useState(()=>{
-       closedChats()
-        .then(data => {
-          console.log('close data-->', data);
-          setTempList1(data.chats)
+  const [tempList1, setTempList1] = useState(() => {
+    suspendedChats()
+      .then(data => {
+        console.log('suspended data-->', data);
+        setTempList1(data.chats);
 
-          //value.closedChatList.current = data.chats;
+        //value.closedChatList.current = data.chats;
 
-          //console.log('closed Chats in Global update2', value.closedChatList.current);
-        })
-        .catch(error => console.error('Error:', error));
-    
- });
- useEffect(()=>{
-  
- },[tempList1])
+        //console.log('closed Chats in Global update2', value.closedChatList.current);
+      })
+      .catch(error => console.error('Error:', error));
+  });
+  useEffect(() => {}, [tempList1]);
   // useEffect(() => {
   //   if (value.closedChatList.current.length <= 0) {
   //     closedChats()
@@ -476,33 +367,113 @@ const ClosedChats = () => {
   // const tempList = React.useMemo(() => {
   //   return value.closedChatList;
   // }, [tempList]);
-  
+
   if (tempList1) {
     //console.log('ChatList', JSON.stringify(tempList.current));
     return (
-    <ScrollView
-   
-   
-  >
-  {/* <Text> Loading.....</Text> */}
-  {tempList1.map((item, index) => {
-      return (
+      <ScrollView>
+        {/* <Text> Loading.....</Text> */}
+        {tempList1.map((item, index) => {
+          return (
+            <TouchableOpacity
+              key={index}
+              onPress={() => {
+                // navigation.navigate('ClosedChatView', {item});
+              }}>
+              <View style={styles.item}>
+                {item.customerIconUrl ? (
+                  <Image
+                    source={{uri: item.customerIconUrl}}
+                    style={styles.avatar}
+                  />
+                ) : (
+                  <Image
+                    source={require('../../assets/boy_dummy.png')}
+                    style={styles.avatar}
+                  />
+                )}
+                <View style={styles.details}>
+                  <Text style={styles.name}>{item.customerName}</Text>
+                  <Text style={styles.lastMessage} key={index}>
+                    {item.messages[item.messages.length - 1].message}
+                  </Text>
+                </View>
+                <View style={styles.info}>
+                  <Text style={styles.time}>{item.time}</Text>
+                </View>
+              </View>
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
+    );
+  } else {
+    return <Text> Loading.....</Text>;
+  }
+};
 
-        <TouchableOpacity
+const ClosedChats = () => {
+  const navigation = useNavigation();
+  // setTimeout(() => {
+  // const value = useContext(GlobalContext);
+  //const [activeChatList, setActiveChatList] = useState([]);
+  console.log('close chat tab-->');
+  // const tempList1;
+  const [tempList1, setTempList1] = useState(() => {
+    closedChats()
+      .then(data => {
+        console.log('close data-->', data);
+        setTempList1(data.chats);
+
+        //value.closedChatList.current = data.chats;
+
+        //console.log('closed Chats in Global update2', value.closedChatList.current);
+      })
+      .catch(error => console.error('Error:', error));
+  });
+  useEffect(() => {}, [tempList1]);
+  // useEffect(() => {
+  //   if (value.closedChatList.current.length <= 0) {
+  //     closedChats()
+  //       .then(data => {
+  //         console.log('close data-->', data);
+
+  //         //value.closedChatList.current = data.chats;
+
+  //         console.log('closed Chats in Global update2', value.closedChatList.current);
+  //       })
+  //       .catch(error => console.error('Error:', error));
+  //   }
+  // });
+
+  // const tempList = React.useMemo(() => {
+  //   return value.closedChatList;
+  // }, [tempList]);
+
+  if (tempList1) {
+    //console.log('ChatList', JSON.stringify(tempList.current));
+    return (
+      <ScrollView>
+        {/* <Text> Loading.....</Text> */}
+        {tempList1.map((item, index) => {
+          return (
+            <TouchableOpacity
               key={index}
               onPress={() => {
                 navigation.navigate('ClosedChatView', {item});
               }}>
               <View style={styles.item}>
-              { item.customerIconUrl?
-                <Image
-                  source={{uri: item.customerIconUrl}}
-                  style={styles.avatar}
-                />:<Image
-                  source={require('../../assets/boy_dummy.png')}
-                  style={styles.avatar}
-                />
-              }
+                {item.customerIconUrl ? (
+                  <Image
+                    source={{uri: item.customerIconUrl}}
+                    style={styles.avatar}
+                  />
+                ) : (
+                  <Image
+                    source={require('../../assets/boy_dummy.png')}
+                    style={styles.avatar}
+                  />
+                )}
                 <View style={styles.details}>
                   <Text style={styles.name}>{item.customerName}</Text>
                   <Text style={styles.lastMessage} key={index}>
@@ -511,45 +482,50 @@ const ClosedChats = () => {
                 </View>
                 <View style={styles.info}>
                   <Text style={styles.time}>{item.time}</Text>
-                  
                 </View>
               </View>
             </TouchableOpacity>
-      );
-    })}
-    </ScrollView>);
+          );
+        })}
+      </ScrollView>
+    );
   } else {
     return <Text> Loading.....</Text>;
   }
-  
 };
 
 let Tabs = () => {
   const [index, setIndex] = React.useState(0);
   //   let chats=props.value;
-  const data=[
+  const data = [
     {
-        "customerIconUrl": "https://qa.twixor.digital/moc/drive/docs/6324796f6d959c3eda71eff3",
-        "customerName": "8190083902",
-        "chatId": "65675656565"
+      customerIconUrl:
+        'https://qa.twixor.digital/moc/drive/docs/6324796f6d959c3eda71eff3',
+      customerName: '8190083902',
+      chatId: '65675656565',
     },
     {
-        "customerIconUrl": "https://qa.twixor.digital/moc/drive/docs/6324796f6d959c3eda71eff3",
-        "customerName": "8190083903",
-        "chatId": "65675656575"
-    }
-];
+      customerIconUrl:
+        'https://qa.twixor.digital/moc/drive/docs/6324796f6d959c3eda71eff3',
+      customerName: '8190083903',
+      chatId: '65675656575',
+    },
+  ];
   useEffect(() => {
     //console.log('tabs called everytime',JSON.stringify(props));
-  },[index]);
-  
+  }, [index]);
+
   //console.log('chats in tab ',JSON.stringify (props));
 
   return (
     <>
       <Tab
         value={index}
-        onChange={e => {setIndex(e);console.log(e)}} scrollable={true}
+        onChange={e => {
+          setIndex(e);
+          console.log(e);
+        }}
+        scrollable={true}
         indicatorStyle={{
           backgroundColor: 'white',
           height: 3,
@@ -559,84 +535,71 @@ let Tabs = () => {
         variant="transparent">
         <Tab.Item
           title="Active Chats"
-          titleStyle={{fontSize: 15, color: '#2f81ad'}} onPress={()=>{console.log("Active Clicked")}} delayPressIn={200}
+          titleStyle={{fontSize: 15, color: '#2f81ad'}}
+          onPress={() => {
+            console.log('Active Clicked');
+          }}
+          delayPressIn={200}
         />
         <Tab.Item
           title="Suspended Chats"
-          titleStyle={{fontSize: 15, color: 'gray'}}  onPress={()=>{console.log("suspended Clicked")}}
+          titleStyle={{fontSize: 15, color: 'gray'}}
+          onPress={() => {
+            console.log('suspended Clicked');
+          }}
         />
         <Tab.Item
           title="Closed Chats"
-          titleStyle={{fontSize: 15, color: 'gray'}}  onPress={()=>{console.log("Close Clicked")}}
+          titleStyle={{fontSize: 15, color: 'gray'}}
+          onPress={() => {
+            console.log('Close Clicked');
+          }}
         />
       </Tab>
-      <TabView value={index} onChange={setIndex} >
+      <TabView value={index} onChange={setIndex}>
         <TabView.Item style={{backgroundColor: 'white', width: '100%'}}>
-      
           <ActiveChats />
-        
         </TabView.Item>
         <TabView.Item style={{backgroundColor: 'white', width: '100%'}}>
-  
-        {/* <ActiveChats />   */}
+          {/* <ActiveChats />   */}
           <SuspendedChats />
           {/* <Text>Loading..</Text> */}
-        
-          
-
-      
-          
-          
         </TabView.Item>
         <TabView.Item style={{backgroundColor: 'white', width: '100%'}}>
-  
-        {/* <ActiveChats />   */}
+          {/* <ActiveChats />   */}
           <ClosedChats />
           {/* <Text>Loading..</Text> */}
-        
-          
-
-      
-          
-          
         </TabView.Item>
       </TabView>
     </>
   );
 };
 
-
 const ChatListPage = chats => {
   console.log('re render issue testchatList', JSON.stringify(chats));
- // useEffect(()=>{},[chats])
-  let value={};
+  // useEffect(()=>{},[chats])
+  let value = {};
   const [index, setIndex] = React.useState(0);
   MenuTrigger.debug = true;
-  const data=[
+  const data = [
     {
-        "customerIconUrl": "https://qa.twixor.digital/moc/drive/docs/6324796f6d959c3eda71eff3",
-        "customerName": "8190083902",
-        "chatId": "65675656565"
+      customerIconUrl:
+        'https://qa.twixor.digital/moc/drive/docs/6324796f6d959c3eda71eff3',
+      customerName: '8190083902',
+      chatId: '65675656565',
     },
     {
-        "customerIconUrl": "https://qa.twixor.digital/moc/drive/docs/6324796f6d959c3eda71eff3",
-        "customerName": "8190083903",
-        "chatId": "65675656575"
-    }];
+      customerIconUrl:
+        'https://qa.twixor.digital/moc/drive/docs/6324796f6d959c3eda71eff3',
+      customerName: '8190083903',
+      chatId: '65675656575',
+    },
+  ];
   return (
-    
-      <MenuProvider >
-      
-    
+    <MenuProvider>
       <ChatHeader />
-      
-    
-      
       <Tabs />
-  
-    
-      </MenuProvider>
-    
+    </MenuProvider>
   );
 };
 
@@ -679,17 +642,16 @@ let styles = {
     color: '#555555',
     marginTop: 8,
   },
-  menuOptionText:{
+  menuOptionText: {
     fontSize: 14,
     fontWeight: '600',
     color: '#ffffff',
     marginTop: 8,
   },
-  leftMenuOptionText:{
+  leftMenuOptionText: {
     fontSize: 12,
     fontWeight: '600',
     color: '#000000',
-    marginTop: 8,
   },
   logotext: {
     fontSize: 22,

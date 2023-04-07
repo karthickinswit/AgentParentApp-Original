@@ -1,4 +1,3 @@
-
 import React, {useContext, useState} from 'react';
 import {
   View,
@@ -12,6 +11,10 @@ import {
   ScrollView,
   Animated,
   Dimensions,
+  TouchableWithoutFeedback,
+  KeyboardAvoidingView,
+  Platform,
+  Keyboard,
 } from 'react-native';
 import {useNavigation, StackActions} from '@react-navigation/native';
 
@@ -28,7 +31,7 @@ import {
 } from 'react-native-popup-menu';
 
 import {closeChat} from '../services/api';
-import { useEffect } from 'react';
+import {useEffect} from 'react';
 let flatList = React.useRef(null);
 
 const ClosedChatView = route => {
@@ -38,12 +41,12 @@ const ClosedChatView = route => {
 
   console.log('Loading Value--> ', JSON.stringify(value));
 
-//   let chatId = route.route.params.chatId;
-//   let chat = value.activeChatList.current.find(response => {
-//     return response.chatId == chatId;
-//   });
+  //   let chatId = route.route.params.chatId;
+  //   let chat = value.activeChatList.current.find(response => {
+  //     return response.chatId == chatId;
+  //   });
 
-let chat=route.route.params.item;
+  let chat = route.route.params.item;
 
   console.log('Chat using context', JSON.stringify(route));
 
@@ -62,10 +65,10 @@ let chat=route.route.params.item;
             onPress={() => {
               //  navigation.dispatch(StackActions.popToTop())
               console.log(navigation.canGoBack());
-              
-               navigation.replace('ChatListPage');
+
+              navigation.replace('ChatListPage');
               // navigation.goBack()
-             // navigation.dispatch(StackActions.pop(1))
+              // navigation.dispatch(StackActions.pop(1))
             }}>
             <Image
               source={require('../../assets/chevron-left-solid.png')}
@@ -73,15 +76,17 @@ let chat=route.route.params.item;
             />
           </TouchableOpacity>
           <View style={styles.leftContainer}>
-          { chat.customerIconUrl?
-                <Image
-                  source={{uri: chat.customerIconUrl}}
-                  style={styles.avatar}
-                />:<Image
-                  source={require('../../assets/boy_dummy.png')}
-                  style={styles.avatar}
-                />
-              }
+            {chat.customerIconUrl ? (
+              <Image
+                source={{uri: chat.customerIconUrl}}
+                style={styles.avatar}
+              />
+            ) : (
+              <Image
+                source={require('../../assets/boy_dummy.png')}
+                style={styles.avatar}
+              />
+            )}
             {/* <Image source={{uri: chat.customerIconUrl}} style={styles.avatar} /> */}
             <View style={styles.textContainer}>
               <Text style={styles.title}>{chat.customerName}</Text>
@@ -238,17 +243,18 @@ let chat=route.route.params.item;
     );
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     return () => {
       // Anything in here is fired on component unmount.
-      console.log("Component will leave")
-  }
-  })
+      console.log('Component will leave');
+    };
+  });
 
   return (
-    
-      <><ChatHeader /><ChatBody /></>
-    
+    <>
+      <ChatHeader />
+      <ChatBody />
+    </>
   );
 };
 

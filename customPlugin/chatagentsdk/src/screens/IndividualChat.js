@@ -12,6 +12,10 @@ import {
   Animated,
   Dimensions,
   ActivityIndicator,
+  TouchableWithoutFeedback,
+  KeyboardAvoidingView,
+  Platform,
+  Keyboard,
 } from 'react-native';
 import {useNavigation, StackActions} from '@react-navigation/native';
 
@@ -38,83 +42,80 @@ const IndividualChat = route => {
   console.log('Loading Value--> ', JSON.stringify(value));
 
   let chatId = route.route.params.chatId;
-  let chat= value.activeChatList.current.chats.find(response => {
+  let chat = value.activeChatList.current.chats.find(response => {
     return response.chatId == chatId;
   });
-  
-  
 
   console.log('Chat using context', JSON.stringify(route));
 
   console.log('In individual chatparams-->', route.route.params.chatId);
 
   console.log('In individual chat-->', JSON.stringify(chat));
-  console.log("chat Users",JSON.stringify(value.activeChatList.current.users))
+  console.log('chat Users', JSON.stringify(value.activeChatList.current.users));
 
   let ChatHeader = () => {
     const navigation = useNavigation();
 
-
-    if(!chat){
-      return (<ActivityIndicator />
-        )
-    }
-    else{
-
-    return (
-      <SafeAreaView style={{backgroundColor: 'white'}}>
-        <View style={styles.container}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => {
-                navigation.navigate("ChatListPage")
-              //navigation.replace('ChatListPage');
-            }}>
-            <Image
-              source={require('../../assets/chevron-left-solid.png')}
-              style={{width: 30, height: 30, borderRadius: 30}}
-            />
-          </TouchableOpacity>
-          <View style={styles.leftContainer}>
-            <Image source={{uri: chat.customerIconUrl}} style={styles.avatar} />
-            <View style={styles.textContainer}>
-              <Text style={styles.title}>{chat.customerName}</Text>
-              <Text style={styles.subtitle}>{}</Text>
-            </View>
-          </View>
-          <View></View>
-          <TouchableOpacity
-            onPress={() => {
-              closeChat(chat.chatId).then(res=>{
-                console.log('Chat closed');
-             // console.log(navigation.canGoBack());
-              // navigation.goBack()
-              navigation.navigate("ChatListPage")
-              });
-              
-              //navigation.replace('ChatListPage');
-            }}>
-            <View
-              style={{
-                paddingBottom: 5,
-                width: 60,
-                backgroundColor: '#5CB3FF',
-                borderRadius: 6,
-                paddingLeft: 5,
-                elevation: 3,
+    if (!chat) {
+      return <ActivityIndicator />;
+    } else {
+      return (
+        <SafeAreaView style={{backgroundColor: 'white'}}>
+          <View style={styles.container}>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => {
+                navigation.navigate('ChatListPage');
+                //navigation.replace('ChatListPage');
               }}>
-              <Text
-                style={{fontSize: 14, color: 'white', alignItems: 'center'}}>
-                Close Chat
-              </Text>
-
-              {/* <Memo /> */}
+              <Image
+                source={require('../../assets/chevron-left-solid.png')}
+                style={{width: 30, height: 30, borderRadius: 30}}
+              />
+            </TouchableOpacity>
+            <View style={styles.leftContainer}>
+              <Image
+                source={{uri: chat.customerIconUrl}}
+                style={styles.avatar}
+              />
+              <View style={styles.textContainer}>
+                <Text style={styles.title}>{chat.customerName}</Text>
+                <Text style={styles.subtitle}>{}</Text>
+              </View>
             </View>
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
-    );
-            }
+            <View></View>
+            <TouchableOpacity
+              onPress={() => {
+                closeChat(chat.chatId).then(res => {
+                  console.log('Chat closed');
+                  // console.log(navigation.canGoBack());
+                  // navigation.goBack()
+                  navigation.navigate('ChatListPage');
+                });
+
+                //navigation.replace('ChatListPage');
+              }}>
+              <View
+                style={{
+                  paddingBottom: 5,
+                  width: 60,
+                  backgroundColor: '#5CB3FF',
+                  borderRadius: 6,
+                  paddingLeft: 5,
+                  elevation: 3,
+                }}>
+                <Text
+                  style={{fontSize: 14, color: 'white', alignItems: 'center'}}>
+                  Close Chat
+                </Text>
+
+                {/* <Memo /> */}
+              </View>
+            </TouchableOpacity>
+          </View>
+        </SafeAreaView>
+      );
+    }
   };
 
   let ChatBody = () => {
@@ -207,31 +208,42 @@ const IndividualChat = route => {
     };
 
     return (
-      <SafeAreaView style={{backgroundColor: 'white'}}>
-        <View style={styles.footerContainer}>
-          <TouchableOpacity style={styles.attachmentButton}>
-            <Image
-              source={require('../../assets/add_128.png')}
-              style={styles.attachmentIcon}
-            />
-          </TouchableOpacity>
-          <TextInput
-            style={styles.input}
-            value={message}
-            onChangeText={setMessage}
-            placeholder="Type a message"
-            multiline
-          />
-          <TouchableOpacity
-            style={styles.sendButton}
-            onPress={handleSendMessage}>
-            <Image
-              source={require('../../assets/send_128.png')}
-              style={styles.sendIcon}
-            />
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <SafeAreaView style={{backgroundColor: 'white'}}>
+            <View style={styles.footercontainer}>
+              {message.length > 0 ? null : (
+                <TouchableOpacity
+                  style={styles.attachmentButton}
+                  onPress={() => setModalVisible(true)}>
+                  <Image
+                    source={require('../../assets/add_128.png')}
+                    style={styles.attachmentIcon}
+                  />
+                </TouchableOpacity>
+              )}
+              <TextInput
+                style={styles.input}
+                value={message}
+                onChangeText={setMessage}
+                placeholder="Type a message"
+                multiline
+              />
+              {message.length > 0 ? (
+                <TouchableOpacity
+                  style={styles.sendButton}
+                  onPress={handleSendMessage}>
+                  <Image
+                    source={require('../../assets/send_128.png')}
+                    style={styles.sendIcon}
+                  />
+                </TouchableOpacity>
+              ) : null}
+            </View>
+          </SafeAreaView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     );
   };
 
@@ -239,16 +251,7 @@ const IndividualChat = route => {
     <MenuProvider>
       <ChatHeader />
       <ChatBody />
-      <View
-        style={{
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          bottom: 0,
-          padding: 60,
-        }}>
-        <ChatFooter />
-      </View>
+      <ChatFooter />
     </MenuProvider>
   );
 };
@@ -336,7 +339,7 @@ let styles = StyleSheet.create({
   },
   footerContainer: {
     position: 'absolute',
-
+    width : "100%",
     flexDirection: 'row',
     alignItems: 'stretch',
     backgroundColor: '#FFFFFF',

@@ -128,53 +128,55 @@ const ClosedChatView = route => {
   let ChatBody = () => {
     let renderMessage = ({item, index}) => {
       return (
-        <ScrollView>
-          {item.actionType == 0 || item.actionType == 1 ? (
-            <View style={styles.messageSent}>
-              <Text style={styles.messageText} key={index}>
-                {item.message}
-              </Text>
-              <Text style={styles.timestampText}>
-                {timeConversion(item.actedOn)}
-              </Text>
-            </View>
-          ) : item.actionType == 2 ? (
-            <View style={styles.messageHeader}>
-              <Text style={styles.messageText} key={index}>
-                {item.messager ? 'You' : item.message} joined chat
-              </Text>
-            </View>
-          ) : item.actionType == 4 ? (
-            <View style={styles.messageHeader}>
-              <Text style={styles.messageText} key={index}>
-                {item.message ? 'You' : item.message} transferred chat To You
-              </Text>
-            </View>
-          ) : item.actionType == 8 ? (
-            <View style={styles.messageHeader}>
-              <Text style={styles.messageText} key={index}>
-                {item.message ? 'You' : item.message} left this chat
-              </Text>
-            </View>
-          ) : item.actionType == 9 ? (
-            <View style={styles.messageHeader}>
-              <Text style={styles.messageText} key={index}>
-                {item.message ? 'You' : item.message} left this chat
-              </Text>
-            </View>
-          ) : item.actionType == 3 ? (
-            <View style={styles.messageReceived}>
-              <Text style={styles.messageText} key={index}>
-                {item.message}
-              </Text>
-              <Text style={styles.timestampText}>
-                {timeConversion(item.actedOn)}
-              </Text>
-            </View>
-          ) : (
-            <View></View>
-          )}
-        </ScrollView>
+        <>
+          <ScrollView>
+            {item.actionType == 0 || item.actionType == 1 ? (
+              <View style={styles.messageSent}>
+                <Text style={styles.messageText} key={index}>
+                  {item.message}
+                </Text>
+                <Text style={styles.timestampText}>
+                  {timeConversion(item.actedOn)}
+                </Text>
+              </View>
+            ) : item.actionType == 2 ? (
+              <View style={styles.messageHeader}>
+                <Text style={styles.messageText} key={index}>
+                  {item.messager ? 'You' : item.message} joined chat
+                </Text>
+              </View>
+            ) : item.actionType == 4 ? (
+              <View style={styles.messageHeader}>
+                <Text style={styles.messageText} key={index}>
+                  {item.message ? 'You' : item.message} transferred chat To You
+                </Text>
+              </View>
+            ) : item.actionType == 8 ? (
+              <View style={styles.messageHeader}>
+                <Text style={styles.messageText} key={index}>
+                  {item.message ? 'You' : item.message} left this chat
+                </Text>
+              </View>
+            ) : item.actionType == 9 ? (
+              <View style={styles.messageHeader}>
+                <Text style={styles.messageText} key={index}>
+                  {item.message ? 'You' : item.message} left this chat
+                </Text>
+              </View>
+            ) : item.actionType == 3 ? (
+              <View style={styles.messageReceived}>
+                <Text style={styles.messageText} key={index}>
+                  {item.message}
+                </Text>
+                <Text style={styles.timestampText}>
+                  {timeConversion(item.actedOn)}
+                </Text>
+              </View>
+            ) : (
+              <View></View>
+            )}
+          </ScrollView>
+        </>
       );
     };
     if (chat.messages) {
@@ -209,7 +211,6 @@ const ClosedChatView = route => {
         attachment: {},
         pickup: false,
       };
-      console.log('send Object', sendObject);
       messageService.sendMessage(sendObject);
       setMessage('');
     };
@@ -242,13 +243,6 @@ const ClosedChatView = route => {
       </SafeAreaView>
     );
   };
-
-  useEffect(() => {
-    return () => {
-      // Anything in here is fired on component unmount.
-      console.log('Component will leave');
-    };
-  });
 
   return (
     <>
@@ -341,7 +335,6 @@ let styles = StyleSheet.create({
   },
   footerContainer: {
     position: 'absolute',
-
     flexDirection: 'row',
     alignItems: 'stretch',
     backgroundColor: '#FFFFFF',

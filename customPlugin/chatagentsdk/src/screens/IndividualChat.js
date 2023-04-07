@@ -212,7 +212,7 @@ const IndividualChat = route => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <SafeAreaView style={{backgroundColor: 'white'}}>
-            <View style={styles.footercontainer}>
+            <View style={styles.footerContainer}>
               {message.length > 0 ? null : (
                 <TouchableOpacity
                   style={styles.attachmentButton}
@@ -339,7 +339,7 @@ let styles = StyleSheet.create({
   },
   footerContainer: {
     position: 'absolute',
-    width : "100%",
+    width: '100%',
     flexDirection: 'row',
     alignItems: 'stretch',
     backgroundColor: '#FFFFFF',

@@ -285,7 +285,7 @@ const ClosedChatView = route => {
     <>
       <ChatHeader />
       <ChatBody />
-      <ChatFooter />
+      {/* <ChatFooter /> */}
     </>
   );
 };

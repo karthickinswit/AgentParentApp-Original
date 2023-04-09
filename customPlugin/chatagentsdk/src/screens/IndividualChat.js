@@ -65,8 +65,9 @@ const IndividualChat = route => {
             <TouchableOpacity
               style={styles.backButton}
               onPress={() => {
-                navigation.navigate('ChatListPage');
+             //   navigation.navigate('ChatListPage');
                 //navigation.replace('ChatListPage');
+                navigation.goBack()
               }}>
               <Image
                 source={require('../../assets/chevron-left-solid.png')}
@@ -89,8 +90,8 @@ const IndividualChat = route => {
                 closeChat(chat.chatId).then(res => {
                   console.log('Chat closed');
                   // console.log(navigation.canGoBack());
-                  // navigation.goBack()
-                  navigation.navigate('ChatListPage');
+                   navigation.goBack()
+                  //navigation.navigate('ChatListPage');
                 });
 
                 //navigation.replace('ChatListPage');

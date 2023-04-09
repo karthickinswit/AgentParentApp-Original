@@ -22,7 +22,7 @@ let ChatHeader = () => {
   const value = useContext(GlobalContext);
   useEffect(() => {
     let interval = new setInterval(() => {
-      setBlink(blink => !blink);
+      // setBlink(blink => !blink);
     }, 400);
     return () => clearInterval(interval);
   }, []);
@@ -188,9 +188,9 @@ let ChatHeader = () => {
           disabled={true}>
           <Text style={styles.statusText}>Transferred Chat</Text>
         </MenuOption> */}
-            <MenuOption
+            {/* <MenuOption
               onSelect={() => {
-                navigation.replace('JustInTime');
+               // navigation.replace('JustInTime');
               }}>
               <View
                 style={{
@@ -206,7 +206,7 @@ let ChatHeader = () => {
                   style={{height: 20, width: 16, paddingRight: 10}}
                 />
               </View>
-            </MenuOption>
+            </MenuOption> */}
           </MenuOptions>
         </Menu>
       </View>
@@ -253,7 +253,7 @@ const ActiveChats = () => {
               key={index}
               onPress={() => {
                 //navigation.setParams({'chats':item});
-                navigation.replace('IndividualChat', {chatId: item.chatId});
+                navigation.navigate('IndividualChat', {chatId: item.chatId});
               }}>
               <View style={styles.item}>
                 <Image

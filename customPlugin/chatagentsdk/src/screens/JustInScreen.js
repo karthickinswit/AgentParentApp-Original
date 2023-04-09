@@ -151,7 +151,10 @@ const JustInTime = () => {
              console.log("SelectedValues", JSON.stringify(a));
              sendTemplateApi(a).then(data=>{
               console.log("res data",JSON.stringify(data));
-              navigation.navigate("ChatListPage")
+             // navigation.navigate("ChatListPage")
+             onChangeMobileNumbers('');
+             setTemplateValue({});
+
               Alert.alert(data.message);
              })
              

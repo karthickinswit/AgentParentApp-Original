@@ -66,8 +66,8 @@ const ClosedChatView = route => {
               //  navigation.dispatch(StackActions.popToTop())
               console.log(navigation.canGoBack());
 
-              navigation.replace('ChatListPage');
-              // navigation.goBack()
+              //navigation.replace('ChatListPage');
+             navigation.goBack()
               // navigation.dispatch(StackActions.pop(1))
             }}>
             <Image

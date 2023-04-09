@@ -14,6 +14,7 @@ import {NavigationContainer, useNavigation} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {FAB} from 'react-native-elements';
 import {LogBox} from 'react-native';
+import JustInTime from 'chatagentsdk/src/screens/JustInScreen';
 
 export const ThemeContext = React.createContext({});
 export default function ChatParent() {
@@ -37,6 +38,11 @@ export default function ChatParent() {
         <Stack.Screen
           name="ChatScreen"
           component={ChatScreen}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="JustInTime"
+          component={JustInTime}
           options={{headerShown: false}}
         />
       </Stack.Navigator>
@@ -209,12 +215,25 @@ BlankPage = ({route}) => {
       userDetails: propDetails,
     });
   };
+  const hanleJustInTime = async () => {
+    Variables.API_URL = propDetails.baseUrl;
+    Variables.TOKEN = propDetails.token;
+
+    navigation.navigate('JustInTime', {
+      userDetails: propDetails,
+    });
+  };
 
   return (
     <>
       <View style={styles.container}>
         <Text style={{marginBottom: 20}}> Hello {route.params.username} </Text>
         <View style={{height: 300}}></View>
+        <FAB
+          title="Just In Time"
+          style={styles.floatinRightBtn}
+          onPress={hanleJustInTime}
+        />
         <FAB
           title="start Messaging"
           style={styles.floatinBtn}
@@ -265,5 +284,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 10,
     right: 10,
+  },
+  floatinRightBtn: {
+    backgroundColor: 'blue',
+    position: 'absolute',
+    bottom: 10,
+    left: 10,
   },
 });

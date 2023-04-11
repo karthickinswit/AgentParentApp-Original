@@ -15,12 +15,17 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {FAB} from 'react-native-elements';
 import {LogBox} from 'react-native';
 import JustInTime from 'chatagentsdk/src/screens/JustInScreen';
+import {notificationListener, requestUserPermission} from './pushNotifications';
 
 export const ThemeContext = React.createContext({});
 export default function ChatParent() {
-  
   const Stack = createStackNavigator();
   LogBox.ignoreAllLogs();
+
+  React.useEffect(() => {
+    requestUserPermission();
+    notificationListener();
+  }, []);
 
   return (
     <NavigationContainer>
@@ -271,7 +276,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
     marginTop: 10,
-    width : "80%"
+    width: '80%',
   },
   submitButtonText: {
     color: '#FFF',

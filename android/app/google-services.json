@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "90045360180",
+    "project_id": "chatapporiginal-d4056",
+    "storage_bucket": "chatapporiginal-d4056.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:90045360180:android:f50ea96a4ca77a0ed68261",
+        "android_client_info": {
+          "package_name": "com.twixoragenttestingapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "90045360180-5d8nfjqs0a5vaeeqssttets2cjjjj5vd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB51nbEBuWIcp52UYtyJ0b5QGWzNGf0cuU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "90045360180-5d8nfjqs0a5vaeeqssttets2cjjjj5vd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

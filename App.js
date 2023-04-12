@@ -20,7 +20,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const ThemeContext = React.createContext({});
 export default function ChatParent() {
-  const navigation = useNavigation();r
   const Stack = createStackNavigator();
   LogBox.ignoreAllLogs();
 
@@ -59,6 +58,7 @@ export default function ChatParent() {
   };
 
   const notificationListener = async () => {
+    const navigation = useNavigation();
     messaging().onNotificationOpenedApp(remoteMessage => {
       console.log(
         'Notification caused app to open from background state:',

@@ -13,7 +13,7 @@ import {ChatScreen} from 'chatagentsdk/src/utils/globalupdate';
 import {NavigationContainer, useNavigation} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {FAB} from 'react-native-elements';
-import {LogBox} from 'react-native';
+import {LogBox, Platform} from 'react-native';
 import JustInTime from 'chatagentsdk/src/screens/JustInScreen';
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';

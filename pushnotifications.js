@@ -1,7 +1,6 @@
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Platform, Button} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import React, {useState} from 'react';
 
 export const requestUserPermission = async () => {
   const authStatus = await messaging().requestPermission();
@@ -10,31 +9,26 @@ export const requestUserPermission = async () => {
     authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
   if (enabled) {
-    console.log('Authorization status ----- ', authStatus);
     fcmToken();
   }
 };
 
-const fcmToken = async () => {
-  let fcmToken = await AsyncStorage.getItem('fcmToken');
-  if (!fcmToken) {
-    console.log('No token found in storage');
+export const fcmToken = async () => {
+  let getfcmToken = await AsyncStorage.getItem('fcmToken');
+  if (!getfcmToken) {
     try {
-      fcmToken = await messaging().getToken();
-      if (fcmToken) {
-        console.log(fcmToken, 'the new one');
-        await AsyncStorage.setItem('fcmToken', fcmToken); // fix the typo
+      getfcmToken = await messaging().getToken();
+      if (getfcmToken) {
+        await AsyncStorage.setItem('fcmToken', getfcmToken);
       }
     } catch (error) {
       console.log('Error in Fcm Token', error);
     }
   }
-  console.log('Token ----- ', fcmToken);
-  return fcmToken;
+  deviceTokenRef.current = getfcmToken;
 };
 
-export const notificationListener = async () => {
-  const navigation = useNavigation();
+export const notificationListener = React.useCallback(navigation => {
   messaging().onNotificationOpenedApp(remoteMessage => {
     console.log(
       'Notification caused app to open from background state:',
@@ -59,14 +53,18 @@ export const notificationListener = async () => {
           'Notification caused app to open from quit state:',
           remoteMessage.data,
         );
-        // setInitialRoute(remoteMessage.data.type);
       }
-      // setLoading(false);
     });
-};
+});
 
-export const deviceId = async () => {
-  const type = Platform.OS === 'android' ? 0 : Platform.OS === 'ios' ? 1 : -1;
-  console.log('Mobile type ----- ', type);
-  return type;
-};
+// const ACTIVE_CHATS = 'https://qa.twixor.digital/moc/e/enterprise/chat/summary';
+// const CLOSED_CHATS = 'https://qa.twixor.digital/moc/e/enterprise/chat/summary';
+// const TOKEN =
+//   'uKJkA3WW1DeuZOzF2hZytmrzax8E28DdBqM/TZffOH8fXZJCEMLuKFgxM9RtZPcl';
+const TEST_API = 'https://63bfe4bea177ed68abbaa502.mockapi.io/chatlist';
+
+export async function testChats() {
+  const response = await fetch(TEST_API);
+  const testdata = await response.json();
+  return testdata;
+}

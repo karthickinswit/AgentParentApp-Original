@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
   View,
   Text,
@@ -13,116 +13,149 @@ import {ChatScreen} from 'chatagentsdk/src/utils/globalupdate';
 import {NavigationContainer, useNavigation} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {FAB} from 'react-native-elements';
-import {LogBox, Platform} from 'react-native';
 import JustInTime from 'chatagentsdk/src/screens/JustInScreen';
-import {
-  notificationListener,
-  requestUserPermission,
-  deviceId,
-} from './pushnotifications';
-// import messaging from '@react-native-firebase/messaging';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
+import messaging from '@react-native-firebase/messaging';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Platform} from 'react-native';
+import { firebase } from '@react-native-firebase/app';
 
-export const ThemeContext = React.createContext({});
+const Stack = createStackNavigator();
+
 export default function ChatParent() {
-  const Stack = createStackNavigator();
-  LogBox.ignoreAllLogs();
+  const deviceTokenRef = useRef('');
 
-  React.useEffect(() => {
+  useEffect(() => {
+    const mobileType =
+      Platform.OS === 'android' ? 0 : Platform.OS === 'ios' ? 1 : -1;
+    // console.log('Mobile Type In App.js -----', mobileType);
     requestUserPermission();
+    fcmToken();
     notificationListener();
-    deviceId();
-    // testChats().then((jsonData) => {
-    //   setMyData(jsonData);
-    // });
-    let test = deviceId()
-console.log("testing",test)})
-  // const requestUserPermission = async () => {
-  //   const authStatus = await messaging().requestPermission();
-  //   const enabled =
-  //     authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-  //     authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+    setTimeout(() => {
+      console.log('Device Token In App.js -----', deviceTokenRef.current);
+      fetch('https://qa.twixor.digital/moc/e/enterprise/add_deviceId', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          deviceType: mobileType,
+          registrationId: deviceTokenRef.current,
+        }),
+      })
+        .then(response => {
+          if (response.status >= 200 && response.status < 300) {
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.indexOf('application/json') !== -1) {
+              return response;
+            } else {
+              console.log('response ------', response.status);
+            }
+          } else {
+            throw new Error(
+              'API Error: Server responded with status ' + response.status,
+            );
+          }
+        })
+        .then(() => {})
+        .catch(error => {
+          console.error('API Error:', error);
+        });
+    }, 0);
+  });
 
-  //   if (enabled) {
-  //     console.log('Authorization status:', authStatus);
-  //     fcmToken();
-  //   }
-  // };
+  const requestUserPermission = async () => {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
-  // const fcmToken = async () => {
-  //   let fcmToken = await AsyncStorage.getItem('fcmToken');
-  //   console.log(fcmToken, 'the Old Token');
-  //   if (!fcmToken) {
-  //     console.log('No token found in storage');
-  //     try {
-  //       fcmToken = await messaging().getToken();
-  //       if (fcmToken) {
-  //         console.log(fcmToken, 'the new one');
-  //         await AsyncStorage.setItem('fcmToken', fcmToken); // fix the typo
-  //       }
-  //     } catch (error) {
-  //       console.log('Error in Fcm Token', error);
-  //     }
-  //   }
-  // };
+    if (enabled) {
+      fcmToken();
+    }
+  };
 
-  // const notificationListener = async () => {
-  //   const navigation = useNavigation();
-  //   messaging().onNotificationOpenedApp(remoteMessage => {
-  //     console.log(
-  //       'Notification caused app to open from background state:',
-  //       remoteMessage.data,
-  //     );
-  //     navigation.navigate(remoteMessage.notification.android.clickAction);
-  //   });
+  const fcmToken = async () => {
+    let getfcmToken = await AsyncStorage.getItem('fcmToken');
+    if (!getfcmToken) {
+      try {
+        getfcmToken = await messaging().getToken();
+        if (getfcmToken) {
+          await AsyncStorage.setItem('fcmToken', getfcmToken);
+        }
+      } catch (error) {
+        console.log('Error in Fcm Token', error);
+      }
+    }
+    deviceTokenRef.current = getfcmToken;
+  };
 
-  //   messaging().onMessage(async remoteMessage => {
-  //     console.log('Message received in foreground', remoteMessage);
-  //   });
+  const notificationListener = React.useCallback(navigation => {
+    messaging().onNotificationOpenedApp(remoteMessage => {
+      console.log(
+        'Notification caused app to open from background state:',
+        remoteMessage.data,
+      );
+      navigation.navigate(remoteMessage.notification.android.clickAction);
+    });
 
-  //   messaging().setBackgroundMessageHandler(async remoteMessage => {
-  //     console.log('Message received in Background', remoteMessage);
-  //   });
+    messaging().onMessage(async remoteMessage => {
+      console.log('Message received in foreground', remoteMessage);
+    });
 
-  //   messaging()
-  //     .getInitialNotification()
-  //     .then(remoteMessage => {
-  //       if (remoteMessage) {
-  //         console.log(
-  //           'Notification caused app to open from quit state:',
-  //           remoteMessage.data,
-  //         );
-  //         // setInitialRoute(remoteMessage.data.type);
-  //       }
-  //       // setLoading(false);
-  //     });
-  // };
+    messaging().setBackgroundMessageHandler(async remoteMessage => {
+      const { title, body } = remoteMessage.notification;
+      const notification = new firebase.notifications.Notification()
+      .setTitle(title)
+      .setBody(body)
+      // .setSound('default')
+      // .android.setChannelId('default-channel')
+      // .android.setAutoCancel(true);
+  
+    firebase.notifications().displayNotification(notification);
+      console.log('Message received in Background', remoteMessage);
+    });
+
+    messaging()
+      .getInitialNotification()
+      .then(remoteMessage => {
+        if (remoteMessage) {
+          console.log(
+            'Notification caused app to open from quit state:',
+            remoteMessage.data,
+          );
+        }
+      });
+  });
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="LoginScreen"
-          component={LoginScreen}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="BlankPage"
-          component={BlankPage}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="ChatScreen"
-          component={ChatScreen}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="JustInTime"
-          component={JustInTime}
-          options={{headerShown: false}}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="LoginScreen"
+            component={LoginScreen}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="BlankPage"
+            component={BlankPage}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="ChatScreen"
+            component={ChatScreen}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="JustInTime"
+            component={JustInTime}
+            options={{headerShown: false}}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </>
   );
 }
 

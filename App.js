@@ -63,6 +63,8 @@ export default function ChatParent() {
         .then(() => {})
         .catch(error => {
           console.error('API Error:', error);
+          console.log('response ------', error);
+
         });
     }, 0);
     showLocalNotification();

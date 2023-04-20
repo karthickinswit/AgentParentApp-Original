@@ -5,7 +5,7 @@ import React, {
   useState,
   useRef,StrictMode
 } from 'react';
-import {View, Text, Image, TouchableOpacity, ScrollView} from 'react-native';
+import {View, Text, Image, TouchableOpacity, ScrollView,BackHandler} from 'react-native';
 import ChatListPage from '../screens/ChatScreen';
 import {messageService} from '../services/websocket';
 import Variables from '../utils/variables';
@@ -36,7 +36,7 @@ export const ChatScreen = ({route}) => {
   const [agents, setAgents] = useState([]);
   const[isSocketConnected,setSocketConnection]=useState(false);
 
-  var data={"name":"Admin@appiyo.com","token":"ni5TXP79gpl3IDh6PyReyWrzax8E28DdBqM/TZffOH8fXZJCEMLuKFgxM9RtZPcl","userId":100,"baseUrl":"https://qa.twixor.digital/moc"};
+  
   
 
   //const[activeChatList,setActiveChatList]=useState([]);
@@ -68,6 +68,24 @@ export const ChatScreen = ({route}) => {
       websocket.connect();
       websocket.waitForSocketConnection(() => {});
     }
+  }, []);
+  function handleBackButtonClick() {
+    //navigation.goBack();
+    console.log("Navigation back button clicked");
+    socketListener.current.unsubscribe();
+    setSocketConnection(false);
+    activeChatList.current=[];
+    websocket.socketRef = null;
+
+    return false;
+  }
+
+
+  useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', handleBackButtonClick);
+    };
   }, []);
 
   useEffect(() => {

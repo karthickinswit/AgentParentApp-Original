@@ -5,7 +5,7 @@ import React, {
   useState,
   useRef,StrictMode
 } from 'react';
-
+import {View, Text, Image, TouchableOpacity, ScrollView} from 'react-native';
 import ChatListPage from '../screens/ChatScreen';
 import {messageService} from '../services/websocket';
 import Variables from '../utils/variables';
@@ -28,11 +28,13 @@ import TestChatListPage from '../screens/TestChatScreen';
 import TestIndividualChat from '../screens/TestIndividualChat';
 import ClosedChatView from '../screens/ClosedChatView';
 import { MenuContext } from "react-native-popup-menu";
+import { ActivityIndicator } from 'react-native-paper';
 
 const states = useStates();
 
 export const ChatScreen = ({route}) => {
   const [agents, setAgents] = useState([]);
+  const[isSocketConnected,setSocketConnection]=useState(false);
 
   var data={"name":"Admin@appiyo.com","token":"ni5TXP79gpl3IDh6PyReyWrzax8E28DdBqM/TZffOH8fXZJCEMLuKFgxM9RtZPcl","userId":100,"baseUrl":"https://qa.twixor.digital/moc"};
   
@@ -83,7 +85,8 @@ export const ChatScreen = ({route}) => {
           missedChatCount.current = enterprise.missedCount;
           transferredChatCount.current = enterprise.transferredCount;
           invitedChatCount.current = enterprise.invitedCount;
-          setSocketResponse(obj);
+          setSocketConnection(true);
+          //setSocketResponse(obj);
         }
       } else if (obj.action === 'customerStartChat') {
         console.log('New ChatArrived');
@@ -129,6 +132,7 @@ export const ChatScreen = ({route}) => {
     });
     return () => {
       socketListener.current.unsubscribe();
+      setSocketConnection(false)
     };
   }, []);
   useEffect(() => {
@@ -169,6 +173,8 @@ export const ChatScreen = ({route}) => {
   }
 
   return (
+    
+      isSocketConnected?
     
     
     <GlobalContext.Provider
@@ -257,7 +263,7 @@ export const ChatScreen = ({route}) => {
       </NavigationContainer>
       
     </GlobalContext.Provider>
-   
+   :<View style={{alignItems:'center'}}><ActivityIndicator hidesWhenStopped={isSocketConnected} ></ActivityIndicator></View>
     
   );
   // }

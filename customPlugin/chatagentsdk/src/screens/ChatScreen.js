@@ -30,18 +30,18 @@ let ChatHeader = () => {
   const navigation = useNavigation();
 
   const handlePress = () => {
-    navigation.navigate('BlankPage');
+    navigation.goBack();
   };
 
   return (
     <View style={[styles.header]} ref={elementRef}>
       <View style={styles.left}>
-        <TouchableOpacity onPress={handlePress}>
+        {/* <TouchableOpacity onPress={handlePress}>
           <Image
             source={require('../../assets/chevron-left-solid.png')}
             style={styles.icon}
           />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <Image
           source={require('../../assets/twixor_hd_icon.png')}
           style={styles.logo}
@@ -71,11 +71,11 @@ let ChatHeader = () => {
                     {
                       position: 'absolute',
                       backgroundColor: 'red',
-                      width: 16,
-                      height: 16,
+                      width: 12,
+                      height: 12,
                       borderRadius: 15 / 2,
                       right: 10,
-                      top: +5,
+                      top: 0,
                       alignItems: 'center',
                       justifyContent: 'center',
                     },
@@ -227,6 +227,7 @@ const ActiveChats = () => {
         var chats = data.chats;
 
         value.activeChatList.current = {users, chats};
+        setActiveChatList({users, chats})
 
         console.log('Chats in Global update2', value.activeChatList.current);
       })
@@ -245,7 +246,9 @@ const ActiveChats = () => {
   }, [tempList]);
   if ('chats' in tempList.current) {
     console.log('ChatList', JSON.stringify(tempList.current.chats));
+    
     return (
+      tempList.current.chats.length!=0?
       <ScrollView>
         {tempList.current.chats.map((item, index) => {
           return (
@@ -278,8 +281,9 @@ const ActiveChats = () => {
             </TouchableOpacity>
           );
         })}
-      </ScrollView>
-    );
+      </ScrollView>:
+      <View style={{alignContent:'center'}}><Text style={{alignContent:'center'}}>No Active Chats</Text></View>
+    )
   } else {
     return <Text> Loading.....</Text>;
   }

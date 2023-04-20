@@ -161,8 +161,6 @@ let ChatHeader = () => {
 
         <Menu
           name="SideMenu"
-          onOpen={console.log('Menu opened')}
-          onBackdropPress={console.log('On menu closed')}
           style={{
             paddingTop: 8,
             paddingRight: 10,

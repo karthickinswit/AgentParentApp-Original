@@ -17,7 +17,7 @@ import JustInTime from 'chatagentsdk/src/screens/JustInScreen';
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Platform} from 'react-native';
-import {firebase} from '@react-native-firebase/app';
+import firebase from '@react-native-firebase/app';
 import PushNotification from 'react-native-push-notification';
 
 const Stack = createStackNavigator();
@@ -28,8 +28,21 @@ export default function ChatParent() {
   useEffect(() => {
     const mobileType =
       Platform.OS === 'android' ? 0 : Platform.OS === 'ios' ? 1 : -1;
-    // console.log('Mobile Type In App.js -----', mobileType);
-    firebase.initializeApp();
+    // console.log('Mobile Type In App.js -----', mobileType)
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp({
+        // clientId: '90045360180-5d8nfjqs0a5vaeeqssttets2cjjjj5vd.apps.googleusercontent.com',
+        appId: '1:90045360180:android:f50ea96a4ca77a0ed68261',
+        apiKey: 'AIzaSyB51nbEBuWIcp52UYtyJ0b5QGWzNGf0cuU',
+        databaseURL: 'x',
+        storageBucket: 'x',
+        messagingSenderId: 'x',
+        projectId: 'chatapporiginal-d4056',
+      });
+    } else {
+      firebase.app(); // if already initialized, use that one
+    }
     requestUserPermission();
     fcmToken();
     notificationListener();
@@ -97,6 +110,10 @@ export default function ChatParent() {
       PushNotification.localNotification({
         title: title,
         message: body,
+        channelId: 'your-channel-id',
+        soundName: "default",
+        vibrate: true,
+        vibration: 300,
       });
     }
   }
@@ -141,15 +158,6 @@ export default function ChatParent() {
     });
 
     messaging().setBackgroundMessageHandler(async remoteMessage => {
-      // const {title, body} = remoteMessage.notification;
-      // const notification = new firebase.notifications.Notification()
-      //   .setTitle(title)
-      //   .setBody(body);
-      // // .setSound('default')
-      // // .android.setChannelId('default-channel')
-      // // .android.setAutoCancel(true);
-
-      // firebase.notifications().displayNotification(notification);
       console.log('Message received in Background', remoteMessage);
     });
 

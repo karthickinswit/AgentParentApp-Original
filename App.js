@@ -17,7 +17,8 @@ import JustInTime from 'chatagentsdk/src/screens/JustInScreen';
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Platform} from 'react-native';
-import { firebase } from '@react-native-firebase/app';
+import {firebase} from '@react-native-firebase/app';
+import PushNotification from 'react-native-push-notification';
 
 const Stack = createStackNavigator();
 
@@ -28,6 +29,7 @@ export default function ChatParent() {
     const mobileType =
       Platform.OS === 'android' ? 0 : Platform.OS === 'ios' ? 1 : -1;
     // console.log('Mobile Type In App.js -----', mobileType);
+    firebase.initializeApp();
     requestUserPermission();
     fcmToken();
     notificationListener();
@@ -63,7 +65,39 @@ export default function ChatParent() {
           console.error('API Error:', error);
         });
     }, 0);
+    showLocalNotification();
   });
+
+  function showLocalNotification() {
+    let title = '';
+    let body = '';
+
+    switch ('customerReplyChat') {
+      case 'customerStartChat':
+        title = 'New Chat';
+        body = 'New chat waiting';
+        break;
+      case 'waitingInviteAccept':
+        title = 'New Chat';
+        body = 'You are invited to a chat';
+        break;
+      case 'waitingTransferAccept':
+        title = 'New Chat';
+        body = 'New Chat transferred to you';
+        break;
+      case 'customerReplyChat':
+        title = 'New Reply';
+        body = 'New reply from customer';
+        break;
+    }
+
+    if (title) {
+      PushNotification.localNotification({
+        title: title,
+        message: body,
+      });
+    }
+  }
 
   const requestUserPermission = async () => {
     const authStatus = await messaging().requestPermission();
@@ -105,15 +139,15 @@ export default function ChatParent() {
     });
 
     messaging().setBackgroundMessageHandler(async remoteMessage => {
-      const { title, body } = remoteMessage.notification;
-      const notification = new firebase.notifications.Notification()
-      .setTitle(title)
-      .setBody(body)
-      // .setSound('default')
-      // .android.setChannelId('default-channel')
-      // .android.setAutoCancel(true);
-  
-    firebase.notifications().displayNotification(notification);
+      // const {title, body} = remoteMessage.notification;
+      // const notification = new firebase.notifications.Notification()
+      //   .setTitle(title)
+      //   .setBody(body);
+      // // .setSound('default')
+      // // .android.setChannelId('default-channel')
+      // // .android.setAutoCancel(true);
+
+      // firebase.notifications().displayNotification(notification);
       console.log('Message received in Background', remoteMessage);
     });
 

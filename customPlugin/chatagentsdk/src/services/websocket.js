@@ -1,5 +1,5 @@
 import {Subject} from 'rxjs';
-import useGlobalData from '../utils/globalupdate';
+
 // import GlobalConfig from './constants/constants';
 // import userInfo from './constants/constants';
 import Variables from '../utils/variables';

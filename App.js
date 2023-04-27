@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  ActivityIndicator,
+  Button,
 } from 'react-native';
 import Variables from 'chatagentsdk/src/utils/variables';
 import {ChatScreen} from 'chatagentsdk/src/utils/globalupdate';
@@ -22,6 +24,13 @@ import PushNotification from 'react-native-push-notification';
 
 const Stack = createStackNavigator();
 
+messaging().setBackgroundMessageHandler(async remoteMessage => {
+  console.log(
+    'Message received in Background',
+    remoteMessage.notification.body,
+  );
+});
+
 export default function ChatParent() {
   const deviceTokenRef = useRef('');
 
@@ -34,11 +43,11 @@ export default function ChatParent() {
       firebase.initializeApp({
         // clientId: '90045360180-5d8nfjqs0a5vaeeqssttets2cjjjj5vd.apps.googleusercontent.com',
         appId: '1:90045360180:android:f50ea96a4ca77a0ed68261',
-        apiKey: 'AIzaSyB51nbEBuWIcp52UYtyJ0b5QGWzNGf0cuU',
+        apiKey: 'AIzaSyDRg2-l7gXtT_0GqGr1zy-6zdXjcxbZrIs',
         databaseURL: 'x',
-        storageBucket: 'x',
+        storageBucket: 'twixor-agent.appspot.com',
         messagingSenderId: 'x',
-        projectId: 'chatapporiginal-d4056',
+        projectId: 'twixor-agent',
       });
     } else {
       firebase.app(); // if already initialized, use that one
@@ -65,7 +74,7 @@ export default function ChatParent() {
             if (contentType && contentType.indexOf('application/json') !== -1) {
               return response;
             } else {
-              console.log('response ------', response.status);
+              console.log('response in API ------', response);
             }
           } else {
             throw new Error(
@@ -77,17 +86,16 @@ export default function ChatParent() {
         .catch(error => {
           console.error('API Error:', error);
           console.log('response ------', error);
-
         });
     }, 0);
-    showLocalNotification();
+    //showLocalNotification();
   });
 
   function showLocalNotification() {
     let title = '';
     let body = '';
 
-    switch ('customerReplyChat') {
+    switch ('waitingInviteAccept') {
       case 'customerStartChat':
         title = 'New Chat';
         body = 'New chat waiting';
@@ -111,9 +119,9 @@ export default function ChatParent() {
         title: title,
         message: body,
         channelId: 'your-channel-id',
-        soundName: "default",
+        soundName: 'default',
         vibrate: true,
-        vibration: 300,
+        vibration: 500,
       });
     }
   }
@@ -154,11 +162,49 @@ export default function ChatParent() {
     });
 
     messaging().onMessage(async remoteMessage => {
-      console.log('Message received in foreground', remoteMessage);
+      console.log(
+        'Message received in foreground',
+        remoteMessage.notification.body,
+      );
     });
 
     messaging().setBackgroundMessageHandler(async remoteMessage => {
-      console.log('Message received in Background', remoteMessage);
+      console.log(
+        'Message received in Background',
+        remoteMessage.notification.body,
+      );
+      // let title = '';
+      // let body = '';
+
+      // switch ('customerReplyChat') {
+      //   case 'customerStartChat':
+      //     title = 'New Chat';
+      //     body = 'New chat waiting';
+      //     break;
+      //   case 'waitingInviteAccept':
+      //     title = 'New Chat';
+      //     body = 'You are invited to a chat';
+      //     break;
+      //   case 'waitingTransferAccept':
+      //     title = 'New Chat';
+      //     body = 'New Chat transferred to you';
+      //     break;
+      //   case 'customerReplyChat':
+      //     title = 'New Reply';
+      //     body = 'New reply from customer';
+      //     break;
+      // }
+
+      // if (title) {
+      //   PushNotification.localNotification({
+      //     title: remoteMessage.notification.title,
+      //     message: remoteMessage.notification.body,
+      //     channelId: 'your-channel-id',
+      //     soundName: 'default',
+      //     vibrate: true,
+      //     vibration: 300,
+      //   });
+      // }
     });
 
     messaging()
@@ -206,9 +252,10 @@ export default function ChatParent() {
 LoginScreen = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isError, setIsError] = useState(false);
   const navigation = useNavigation();
-
-  const HandleForgotPassword = () => {};
 
   const ValidateEmail = username => {
     const regex =
@@ -217,24 +264,33 @@ LoginScreen = () => {
   };
 
   const HandleLogin = async () => {
+    setIsLoading(true);
+    setIsError(false);
     if ((!ValidateEmail(username) && password.length < 8) || username == '') {
-    } else if (password.length < 8) {
+      setIsLoading(false);
+    } else if (password.length < 2) {
+      setIsLoading(false);
     } else {
       let res = await LoginApi();
-      console.log('res', res);
-      Alert.alert(JSON.stringify(res));
-      if (res.status) {
-        Alert.alert('Attempt Successful');
-        console.log(res.response.token);
-        navigation.navigate('BlankPage', {
-          username: username,
-          token: res.response.token,
-          uId: res.response.uId,
-        });
+      if (res.status && res.response.token) {
+        setIsLoading(false);
+        setIsSuccess(true);
+        setTimeout(() => {
+          navigation.navigate('BlankPage', {
+            username: username,
+            token: res.response.token,
+            uId: res.response.uId,
+          });
+        }, 10);
       } else {
-        Alert.alert(res.message.message);
+        setIsError(true);
+        setIsLoading(false);
       }
     }
+  };
+
+  const handleRetry = () => {
+    setIsError(false);
   };
 
   async function LoginApi() {
@@ -279,9 +335,29 @@ LoginScreen = () => {
         onChangeText={setPassword}
         value={password}
       />
-      <TouchableOpacity style={styles.submitButton} onPress={HandleLogin}>
-        <Text style={styles.submitButtonText}> Login </Text>
-      </TouchableOpacity>
+      {isError ? (
+        <TouchableOpacity style={styles.submitButton2} onPress={handleRetry}>
+          <Text style={styles.submitButtonText}>
+            Invalid Credentials. Try Again!
+          </Text>
+        </TouchableOpacity>
+      ) : (
+        <TouchableOpacity
+          style={isSuccess ? styles.submitButton1 : styles.submitButton}
+          onPress={HandleLogin}>
+          <Text style={styles.submitButtonText}>
+            {isLoading ? (
+              <ActivityIndicator color="white" />
+            ) : isSuccess ? (
+              'Login Successful'
+            ) : isError ? (
+              'Error'
+            ) : (
+              'Login'
+            )}
+          </Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
@@ -379,19 +455,18 @@ BlankPage = ({route}) => {
 
   return (
     <>
-      <View style={styles.container}>
-        <Text style={{marginBottom: 20}}> Hello {route.params.username} </Text>
-        <View style={{height: 300}}></View>
-        <FAB
-          title="Just In Time"
-          style={styles.floatinRightBtn}
-          onPress={hanleJustInTime}
-        />
-        <FAB
-          title="start Messaging"
-          style={styles.floatinBtn}
-          onPress={HandleClick}
-        />
+      <Text style={styles1.helloText}>Hello {route.params.username}</Text>
+      <View style={styles1.containerNewFab}>
+        <TouchableOpacity
+          style={styles1.buttonNewFab}
+          onPress={hanleJustInTime}>
+          <Text style={styles1.textNewFab}>JIT</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles1.buttonNewFab, styles1.secondaryNewFab]}
+          onPress={HandleClick}>
+          <Text style={styles1.textNewFab}>SM</Text>
+        </TouchableOpacity>
       </View>
     </>
   );
@@ -426,6 +501,20 @@ const styles = StyleSheet.create({
     marginTop: 10,
     width: '80%',
   },
+  submitButton1: {
+    backgroundColor: 'green',
+    padding: 10,
+    borderRadius: 10,
+    marginTop: 10,
+    width: '80%',
+  },
+  submitButton2: {
+    backgroundColor: '#cc0000',
+    padding: 10,
+    borderRadius: 10,
+    marginTop: 10,
+    width: '80%',
+  },
   submitButtonText: {
     color: '#FFF',
     textAlign: 'center',
@@ -443,5 +532,41 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 10,
     left: 10,
+  },
+});
+
+const styles1 = StyleSheet.create({
+  containerNewFab: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    alignItems: 'center',
+  },
+  buttonNewFab: {
+    backgroundColor: '#2196F3',
+    borderRadius: 30,
+    width: 60,
+    height: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  secondaryNewFab: {
+    backgroundColor: '#FFC107',
+  },
+  textNewFab: {
+    color: '#fff',
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  helloText: {
+    position: 'absolute',
+    top: 20,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    textAlign: 'center',
+    fontSize: 20,
+    fontWeight: 'bold',
   },
 });

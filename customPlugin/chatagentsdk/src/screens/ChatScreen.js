@@ -2,7 +2,6 @@ import React, {useEffect, useState, useContext} from 'react';
 import {View, Text, Image, TouchableOpacity, ScrollView} from 'react-native';
 import {Tab, TabView} from '@rneui/themed';
 import {useNavigation} from '@react-navigation/native';
-
 import {messageService} from '../services/websocket';
 
 import {
@@ -19,8 +18,10 @@ let elementRef = React.createRef();
 
 let ChatHeader = () => {
   const [blink, setBlink] = useState(true);
+  const [isConnected, setIsConnected] = useState();
   const value = useContext(GlobalContext);
   useEffect(() => {
+    checkConnectivity();
     let interval = new setInterval(() => {
       // setBlink(blink => !blink);
     }, 400);
@@ -29,30 +30,41 @@ let ChatHeader = () => {
 
   const navigation = useNavigation();
 
-  const handlePress = () => {
-    navigation.goBack();
+  const checkConnectivity = async () => {
+    try {
+      const response = await fetch('https://www.google.com');
+      if (response.status === 200) {
+        setIsConnected(true);
+      } else {
+        setIsConnected(false);
+      }
+    } catch (error) {
+      setIsConnected('Connecting...');
+    }
   };
 
   return (
     <View style={[styles.header]} ref={elementRef}>
       <View style={styles.left}>
-        {/* <TouchableOpacity onPress={handlePress}>
-          <Image
-            source={require('../../assets/chevron-left-solid.png')}
-            style={styles.icon}
-          />
-        </TouchableOpacity> */}
         <Image
           source={require('../../assets/twixor_hd_icon.png')}
           style={styles.logo}
         />
-        <View style={styles.status}>
-          <Text style={styles.logotext}>Chats </Text>
-          <View
-            style={[styles.statusIndicator, {backgroundColor: '#5ED430'}]}
-          />
-          <Text style={styles.statusText}>Online</Text>
-        </View>
+        {isConnected === true ? (
+          <View style={styles.status}>
+            <Text style={styles.logotext}>Chats</Text>
+
+            <View
+              style={[styles.statusIndicator, {backgroundColor: '#5ED430'}]}
+            />
+            <Text style={styles.statusText}>Online</Text>
+          </View>
+        ) : (
+          <View style={styles.status}>
+            <Text style={styles.logotext}>Chats</Text>
+            <Text style={styles.statusText1}>Connecting...</Text>
+          </View>
+        )}
       </View>
       <View style={[styles.right]}>
         <Menu
@@ -159,7 +171,7 @@ let ChatHeader = () => {
           </MenuOptions>
         </Menu>
 
-        <Menu
+        {/* <Menu
           name="SideMenu"
           style={{
             paddingTop: 8,
@@ -168,7 +180,7 @@ let ChatHeader = () => {
           <MenuTrigger>
             <Image
               source={require('../../assets/inside_menu_64.png')}
-              style={styles.icon}
+              style={styles.icon1}
             />
           </MenuTrigger>
           <MenuOptions
@@ -178,15 +190,15 @@ let ChatHeader = () => {
               flexDirection: 'column',
               borderRadius: 15,
             }}>
-            {/* <MenuOption style={{}} onSelect={() => alert('No New chats')}>
+            <MenuOption style={{}} onSelect={() => alert('No New chats')}>
           <Text style={styles.statusText}>New Chats - 0</Text>
         </MenuOption>
         <MenuOption
           onSelect={() => alert('No Transferred Chats')}
           disabled={true}>
           <Text style={styles.statusText}>Transferred Chat</Text>
-        </MenuOption> */}
-            {/* <MenuOption
+        </MenuOption>
+            <MenuOption
               onSelect={() => {
                // navigation.replace('JustInTime');
               }}>
@@ -204,17 +216,15 @@ let ChatHeader = () => {
                   style={{height: 20, width: 16, paddingRight: 10}}
                 />
               </View>
-            </MenuOption> */}
+            </MenuOption>
           </MenuOptions>
-        </Menu>
+        </Menu> */}
       </View>
     </View>
   );
 };
 
-const ActiveChats = () => {
-  const navigation = useNavigation();
-  // setTimeout(() => {
+const ActiveChats = navigation => {
   const value = useContext(GlobalContext);
   const [activeChatList, setActiveChatList] = useState(() => {
     activeChats()
@@ -225,35 +235,24 @@ const ActiveChats = () => {
         var chats = data.chats;
 
         value.activeChatList.current = {users, chats};
-        setActiveChatList({users, chats})
+        setActiveChatList({users, chats});
 
         console.log('Chats in Global update2', value.activeChatList.current);
       })
       .catch(error => console.error('Error:', error));
   });
-  console.log('Active chat tab-->', value);
-
-  // useEffect(() => {
-  //   if (value.activeChatList.current.length <= 0) {
-
-  //   }
-  // });
 
   const tempList = React.useMemo(() => {
     return value.activeChatList;
   }, [tempList]);
   if ('chats' in tempList.current) {
-    console.log('ChatList', JSON.stringify(tempList.current.chats));
-    
-    return (
-      tempList.current.chats.length!=0?
+    return tempList.current.chats.length != 0 ? (
       <ScrollView>
         {tempList.current.chats.map((item, index) => {
           return (
             <TouchableOpacity
               key={index}
               onPress={() => {
-                //navigation.setParams({'chats':item});
                 navigation.navigate('IndividualChat', {chatId: item.chatId});
               }}>
               <View style={styles.item}>
@@ -279,9 +278,12 @@ const ActiveChats = () => {
             </TouchableOpacity>
           );
         })}
-      </ScrollView>:
-      <View style={{alignContent:'center'}}><Text style={{alignContent:'center'}}>No Active Chats</Text></View>
-    )
+      </ScrollView>
+    ) : (
+      <View style={{alignContent: 'center'}}>
+        <Text style={{alignContent: 'center'}}>No Active Chats</Text>
+      </View>
+    );
   } else {
     return <Text> Loading.....</Text>;
   }
@@ -594,10 +596,17 @@ let styles = {
     marginLeft: 7,
   },
   statusText: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '600',
     color: '#555555',
     marginTop: 8,
+  },
+  statusText1: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#555555',
+    marginTop: 8,
+    left: 5,
   },
   menuOptionText: {
     fontSize: 14,
@@ -634,6 +643,12 @@ let styles = {
     width: 24,
     height: 24,
     marginHorizontal: 8,
+  },
+  icon1: {
+    width: 24,
+    height: 27,
+    marginHorizontal: 8,
+    top: -2.5,
   },
   item: {
     flexDirection: 'row',

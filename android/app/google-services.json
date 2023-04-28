@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "90045360180",
-    "project_id": "chatapporiginal-d4056",
-    "storage_bucket": "chatapporiginal-d4056.appspot.com"
+    "project_number": "584671962460",
+    "project_id": "twixorchatagentsdk",
+    "storage_bucket": "twixorchatagentsdk.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:90045360180:android:f50ea96a4ca77a0ed68261",
+        "mobilesdk_app_id": "1:584671962460:android:e3953e51e628066a844d99",
         "android_client_info": {
           "package_name": "com.twixoragenttestingapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "90045360180-5d8nfjqs0a5vaeeqssttets2cjjjj5vd.apps.googleusercontent.com",
+          "client_id": "584671962460-hso6ufr25g288faf6h7c339vmnf2t26a.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyB51nbEBuWIcp52UYtyJ0b5QGWzNGf0cuU"
+          "current_key": "AIzaSyClYkkEi7IvXOLzTf_v9cX3SvZrwEc5nck"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "90045360180-5d8nfjqs0a5vaeeqssttets2cjjjj5vd.apps.googleusercontent.com",
+              "client_id": "584671962460-hso6ufr25g288faf6h7c339vmnf2t26a.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

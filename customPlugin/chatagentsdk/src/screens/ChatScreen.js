@@ -246,6 +246,7 @@ const ActiveChats = navigation => {
     return value.activeChatList;
   }, [tempList]);
   if ('chats' in tempList.current) {
+    const navigation = useNavigation();
     return tempList.current.chats.length != 0 ? (
       <ScrollView>
         {tempList.current.chats.map((item, index) => {

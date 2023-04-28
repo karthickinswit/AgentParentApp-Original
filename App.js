@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,19 +6,16 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   ActivityIndicator,
-  Button,
 } from 'react-native';
 import Variables from 'chatagentsdk/src/utils/variables';
-import {ChatScreen} from 'chatagentsdk/src/utils/globalupdate';
-import {NavigationContainer, useNavigation} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
-import {FAB} from 'react-native-elements';
+import { ChatScreen } from 'chatagentsdk/src/utils/globalupdate';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import JustInTime from 'chatagentsdk/src/screens/JustInScreen';
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Platform} from 'react-native';
+import { Platform } from 'react-native';
 import firebase from '@react-native-firebase/app';
 import PushNotification from 'react-native-push-notification';
 
@@ -37,21 +34,17 @@ export default function ChatParent() {
   useEffect(() => {
     const mobileType =
       Platform.OS === 'android' ? 0 : Platform.OS === 'ios' ? 1 : -1;
-    // console.log('Mobile Type In App.js -----', mobileType)
-
-    if (!firebase.apps.length) {
-      firebase.initializeApp({
-        // clientId: '90045360180-5d8nfjqs0a5vaeeqssttets2cjjjj5vd.apps.googleusercontent.com',
-        appId: '1:90045360180:android:f50ea96a4ca77a0ed68261',
-        apiKey: 'AIzaSyDRg2-l7gXtT_0GqGr1zy-6zdXjcxbZrIs',
+    !firebase.apps.length
+      ? firebase.initializeApp({
+        appId: '1:584671962460:android:e3953e51e628066a844d99',
+        apiKey: 'AIzaSyClYkkEi7IvXOLzTf_v9cX3SvZrwEc5nck',
         databaseURL: 'x',
-        storageBucket: 'twixor-agent.appspot.com',
+        storageBucket: 'twixorchatagentsdk.appspot.com',
         messagingSenderId: 'x',
-        projectId: 'twixor-agent',
-      });
-    } else {
-      firebase.app(); // if already initialized, use that one
-    }
+        projectId: 'twixorchatagentsdk',
+      })
+      : firebase.app();
+
     requestUserPermission();
     fcmToken();
     notificationListener();
@@ -82,7 +75,7 @@ export default function ChatParent() {
             );
           }
         })
-        .then(() => {})
+        .then(() => { })
         .catch(error => {
           console.error('API Error:', error);
           console.log('response ------', error);
@@ -226,22 +219,22 @@ export default function ChatParent() {
           <Stack.Screen
             name="LoginScreen"
             component={LoginScreen}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="BlankPage"
             component={BlankPage}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="ChatScreen"
             component={ChatScreen}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="JustInTime"
             component={JustInTime}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
         </Stack.Navigator>
       </NavigationContainer>
@@ -362,72 +355,8 @@ LoginScreen = () => {
   );
 };
 
-BlankPage = ({route}) => {
+BlankPage = ({ route }) => {
   const navigation = useNavigation();
-  let chat = {};
-
-  chat['messages'] = [
-    {
-      id: '0',
-      sender: 'me',
-      text: ' yErLtR',
-      timestamp: '9:00 AM',
-    },
-    {
-      id: '1',
-      sender: 'me',
-      text: ' tnQCG6',
-      timestamp: '9:00 AM',
-    },
-    {
-      id: '2',
-      sender: 'me',
-      text: ' 2s0roJ',
-      timestamp: '9:00 AM',
-    },
-    {
-      id: '3',
-      sender: 'me',
-      text: ' 8t45cX',
-      timestamp: '9:00 AM',
-    },
-    {
-      id: '4',
-      sender: 'me',
-      text: ' YfOW49',
-      timestamp: '9:00 AM',
-    },
-    {
-      id: '5',
-      sender: 'me',
-      text: ' Svaypi',
-      timestamp: '9:00 AM',
-    },
-    {
-      id: '6',
-      sender: 'me',
-      text: ' IDetTs',
-      timestamp: '9:00 AM',
-    },
-    {
-      id: '7',
-      sender: 'me',
-      text: ' 6JOXfg',
-      timestamp: '9:00 AM',
-    },
-    {
-      id: '8',
-      sender: 'me',
-      text: ' o7qY03',
-      timestamp: '9:00 AM',
-    },
-    {
-      id: '9',
-      sender: 'me',
-      text: ' zCA9oJ',
-      timestamp: '9:00 AM',
-    },
-  ];
 
   const propDetails = {
     name: route.params.username,
@@ -444,6 +373,7 @@ BlankPage = ({route}) => {
       userDetails: propDetails,
     });
   };
+
   const hanleJustInTime = async () => {
     Variables.API_URL = propDetails.baseUrl;
     Variables.TOKEN = propDetails.token;

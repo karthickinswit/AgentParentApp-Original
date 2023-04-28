@@ -15,9 +15,7 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Button,
   Alert,
-  ActivityIndicator,
   Animated
 } from 'react-native';
 import Variables from './src/utils/variables';

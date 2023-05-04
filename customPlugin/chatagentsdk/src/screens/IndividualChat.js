@@ -9,13 +9,17 @@ import {
   FlatList,
   TextInput,
   ScrollView,
-  Animated,
-  Dimensions,
-  ActivityIndicator,
-  TouchableWithoutFeedback,
+  Alert,
+  RefreshControl,
   KeyboardAvoidingView,
   Platform,
+  TouchableWithoutFeedback,
   Keyboard,
+  ActivityIndicator,
+  Button,
+  Modal,
+  Dimensions,
+  Animated,
 } from 'react-native';
 import {useNavigation, StackActions} from '@react-navigation/native';
 
@@ -23,35 +27,17 @@ import {messageService} from '../services/websocket';
 const {height} = Dimensions.get('screen');
 import {GlobalContext} from '../utils/globalupdate';
 import {timeConversion} from '../utils/utilities';
-import {
-  Menu,
-  MenuOptions,
-  MenuOption,
-  MenuTrigger,
-  MenuProvider,
-} from 'react-native-popup-menu';
+import {MenuProvider} from 'react-native-popup-menu';
 
 import {closeChat} from '../services/api';
 let flatList = React.useRef(null);
 
 const IndividualChat = route => {
-  const scrollY = React.useRef(new Animated.Value(0)).current;
-
   const value = React.useContext(GlobalContext);
-
-  console.log('Loading Value--> ', JSON.stringify(value));
-
   let chatId = route.route.params.chatId;
   let chat = value.activeChatList.current.chats.find(response => {
     return response.chatId == chatId;
   });
-
-  console.log('Chat using context', JSON.stringify(route));
-
-  console.log('In individual chatparams-->', route.route.params.chatId);
-
-  console.log('In individual chat-->', JSON.stringify(chat));
-  console.log('chat Users', JSON.stringify(value.activeChatList.current.users));
 
   let ChatHeader = () => {
     const navigation = useNavigation();
@@ -60,61 +46,58 @@ const IndividualChat = route => {
       return <ActivityIndicator />;
     } else {
       return (
-        <SafeAreaView style={{backgroundColor: 'white'}}>
-          <View style={styles.container}>
-            <TouchableOpacity
-              style={styles.backButton}
-              onPress={() => {
-             //   navigation.navigate('ChatListPage');
-                //navigation.replace('ChatListPage');
-                navigation.goBack()
-              }}>
-              <Image
-                source={require('../../assets/chevron-left-solid.png')}
-                style={{width: 30, height: 30, borderRadius: 30}}
-              />
-            </TouchableOpacity>
-            <View style={styles.leftContainer}>
-              <Image
-                source={{uri: chat.customerIconUrl}}
-                style={styles.avatar}
-              />
-              <View style={styles.textContainer}>
-                <Text style={styles.title}>{chat.customerName}</Text>
-                <Text style={styles.subtitle}>{}</Text>
+        <>
+          <SafeAreaView style={{backgroundColor: 'white'}}>
+            <View style={styles.container}>
+              <TouchableOpacity
+                style={styles.backButton}
+                onPress={() => {
+                  navigation.goBack();
+                }}>
+                <Image
+                  source={require('../../assets/chevron-left-solid.png')}
+                  style={styles.logo}
+                />
+              </TouchableOpacity>
+              <View style={styles.leftContainer}>
+                {chat.customerIconUrl ? (
+                  <Image
+                    source={{uri: chat.customerIconUrl}}
+                    style={styles.avatar}
+                  />
+                ) : (
+                  <Image
+                    source={require('../../assets/boy_dummy.png')}
+                    style={styles.avatar}
+                  />
+                )}
+                <View style={styles.textContainer}>
+                  <Text style={styles.title}>{chat.customerName}</Text>
+                  <Text style={styles.subtitle}>Online</Text>
+                </View>
+              </View>
+              <View style={styles.rightContainer}>
+                <TouchableOpacity
+                  onPress={() => {
+                    closeChat(chat.chatId).then(() => {
+                      navigation.goBack();
+                    });
+                  }}>
+                  <View style={[styles.buttonCnf]}>
+                    <Text
+                      style={{
+                        fontSize: 13,
+                        color: 'white',
+                        alignItems: 'center',
+                      }}>
+                      Close Chat
+                    </Text>
+                  </View>
+                </TouchableOpacity>
               </View>
             </View>
-            <View></View>
-            <TouchableOpacity
-              onPress={() => {
-                closeChat(chat.chatId).then(res => {
-                  console.log('Chat closed');
-                  // console.log(navigation.canGoBack());
-                   navigation.goBack()
-                  //navigation.navigate('ChatListPage');
-                });
-
-                //navigation.replace('ChatListPage');
-              }}>
-              <View
-                style={{
-                  paddingBottom: 5,
-                  width: 60,
-                  backgroundColor: '#5CB3FF',
-                  borderRadius: 6,
-                  paddingLeft: 5,
-                  elevation: 3,
-                }}>
-                <Text
-                  style={{fontSize: 14, color: 'white', alignItems: 'center'}}>
-                  Close Chat
-                </Text>
-
-                {/* <Memo /> */}
-              </View>
-            </TouchableOpacity>
-          </View>
-        </SafeAreaView>
+          </SafeAreaView>
+        </>
       );
     }
   };
@@ -122,53 +105,55 @@ const IndividualChat = route => {
   let ChatBody = () => {
     let renderMessage = ({item, index}) => {
       return (
-        <ScrollView>
-          {item.actionType == 0 || item.actionType == 1 ? (
-            <View style={styles.messageSent}>
-              <Text style={styles.messageText} key={index}>
-                {item.message}
-              </Text>
-              <Text style={styles.timestampText}>
-                {timeConversion(item.actedOn)}
-              </Text>
-            </View>
-          ) : item.actionType == 2 ? (
-            <View style={styles.messageHeader}>
-              <Text style={styles.messageText} key={index}>
-                {item.messager ? 'You' : item.message} You joined chat
-              </Text>
-            </View>
-          ) : item.actionType == 4 ? (
-            <View style={styles.messageHeader}>
-              <Text style={styles.messageText} key={index}>
-                {item.message ? 'You' : item.message} transferred chat To You
-              </Text>
-            </View>
-          ) : item.actionType == 8 ? (
-            <View style={styles.messageHeader}>
-              <Text style={styles.messageText} key={index}>
-                {item.message ? 'You' : item.message} left this chat
-              </Text>
-            </View>
-          ) : item.actionType == 9 ? (
-            <View style={styles.messageHeader}>
-              <Text style={styles.messageText} key={index}>
-                {item.message ? 'You' : item.message} You left this chat
-              </Text>
-            </View>
-          ) : item.actionType == 3 ? (
-            <View style={styles.messageReceived}>
-              <Text style={styles.messageText} key={index}>
-                {item.message}
-              </Text>
-              <Text style={styles.timestampText}>
-                {timeConversion(item.actedOn)}
-              </Text>
-            </View>
-          ) : (
-            <View></View>
-          )}
-        </ScrollView>
+        <View style={{flex: 1}}>
+          <ScrollView>
+            {item.actionType == 0 || item.actionType == 1 ? (
+              <View style={styles.messageSent}>
+                <Text style={styles.messageText} key={index}>
+                  {item.message}
+                </Text>
+                <Text style={styles.timestampText}>
+                  {timeConversion(item.actedOn)}
+                </Text>
+              </View>
+            ) : item.actionType == 2 ? (
+              <View style={styles.messageHeader}>
+                <Text style={styles.messageText} key={index}>
+                  {item.messager ? 'You' : item.message} You joined chat
+                </Text>
+              </View>
+            ) : item.actionType == 4 ? (
+              <View style={styles.messageHeader}>
+                <Text style={styles.messageText} key={index}>
+                  {item.message ? 'You' : item.message} transferred chat To You
+                </Text>
+              </View>
+            ) : item.actionType == 8 ? (
+              <View style={styles.messageHeader}>
+                <Text style={styles.messageText} key={index}>
+                  {item.message ? 'You' : item.message} left this chat
+                </Text>
+              </View>
+            ) : item.actionType == 9 ? (
+              <View style={styles.messageHeader}>
+                <Text style={styles.messageText} key={index}>
+                  {item.message ? 'You' : item.message} You left this chat
+                </Text>
+              </View>
+            ) : item.actionType == 3 ? (
+              <View style={styles.messageReceived}>
+                <Text style={styles.messageText} key={index}>
+                  {item.message}
+                </Text>
+                <Text style={styles.timestampText}>
+                  {timeConversion(item.actedOn)}
+                </Text>
+              </View>
+            ) : (
+              <View></View>
+            )}
+          </ScrollView>
+        </View>
       );
     };
     if (chat) {
@@ -185,7 +170,11 @@ const IndividualChat = route => {
         />
       );
     } else {
-      return <Text> Loading.....</Text>;
+      return (
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <ActivityIndicator size="large" color="#217eac" />
+        </View>
+      );
     }
   };
 
@@ -209,39 +198,13 @@ const IndividualChat = route => {
     };
 
     return (
-      // <SafeAreaView style={{backgroundColor: 'white'}}>
-      //   <View style={styles.footerContainer}>
-      //     <TouchableOpacity style={styles.attachmentButton}>
-      //       <Image
-      //         source={require('../../assets/add_128.png')}
-      //         style={styles.attachmentIcon}
-      //       />
-      //     </TouchableOpacity>
-      //     <TextInput
-      //       style={styles.input}
-      //       value={message}
-      //       onChangeText={setMessage}
-      //       placeholder="Type a message"
-      //       multiline
-      //     />
-      //     <TouchableOpacity
-      //       style={styles.sendButton}
-      //       onPress={handleSendMessage}>
-      //       <Image
-      //         source={require('../../assets/send_128.png')}
-      //         style={styles.sendIcon}
-      //       />
-      //     </TouchableOpacity>
-      //   </View>
-      // </SafeAreaView>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <SafeAreaView style={{backgroundColor: 'white'}}>
             <View style={styles.footercontainer}>
               {message.length > 0 ? null : (
-                <TouchableOpacity
-                  style={styles.attachmentButton}>
+                <TouchableOpacity style={styles.attachmentButton}>
                   <Image
                     source={require('../../assets/add_128.png')}
                     style={styles.attachmentIcon}
@@ -282,11 +245,44 @@ const IndividualChat = route => {
 };
 
 let styles = StyleSheet.create({
+  containerCnf: {
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  lineCnf: {
+    height: 1,
+    width: '100%',
+    backgroundColor: '#ccc',
+  },
+  buttonContainerCnf: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  textCnf: {
+    fontWeight: 'bold',
+    marginRight: 10,
+  },
+  buttonCnf: {
+    backgroundColor: '#217eac',
+    paddingHorizontal: 13,
+    paddingVertical: 8,
+    borderRadius: 5,
+    marginHorizontal: 2,
+  },
+  selectedButtonCnf: {
+    backgroundColor: '#6bbf59',
+  },
+  buttonTextCnf: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
   container: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    height: 50,
+    height: 60,
     backgroundColor: 'white',
     paddingHorizontal: 16,
     borderBottomColor: '#DDDDDD',

@@ -1,5 +1,12 @@
 import React, {useEffect, useState, useContext} from 'react';
-import {View, Text, Image, TouchableOpacity, ScrollView} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+  ActivityIndicator,
+} from 'react-native';
 import {Tab, TabView} from '@rneui/themed';
 import {useNavigation} from '@react-navigation/native';
 import {messageService} from '../services/websocket';
@@ -67,110 +74,111 @@ let ChatHeader = () => {
         )}
       </View>
       <View style={[styles.right]}>
-        <Menu
-          style={{backfaceVisibility: 'visible'}}
-          name="notifyMenu"
-          onBackdropPress={console.log('on close menu')}>
-          <MenuTrigger onPress={console.log('Bell icon pressed')}>
-            <View style={styles.badgeSetup}>
-              <Image
-                source={require('../../assets/notification_64.png')}
-                style={styles.icon}
-              />
-              {value.newChatCount.current > 0 ? (
-                <View
-                  style={[
-                    {
-                      position: 'absolute',
-                      backgroundColor: 'red',
-                      width: 12,
-                      height: 12,
-                      borderRadius: 15 / 2,
-                      right: 10,
-                      top: 0,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    },
-                    {display: blink ? 'flex' : 'none'},
-                  ]}>
-                  <Text
-                    style={{
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: '#FFFFFF',
-                      fontSize: 8,
-                    }}>
-                    {value.newChatCount.current}
-                  </Text>
-                </View>
-              ) : (
-                <View />
-              )}
-            </View>
-          </MenuTrigger>
-          <MenuOptions
-            ref={elementRef}
-            optionsContainerStyle={{
-              paddingLeft: 10,
-              height: 200,
-              width: 150,
-              flexDirection: 'column',
-              borderRadius: 15,
-              opacity: 5,
-              alignContent: 'flex-start',
-              backgroundColor: '#b3e1e8',
-              borderStyle: 'solid',
-            }}>
-            <MenuOption
-              style={{borderColor: 'red'}}
-              onSelect={() => {
-                if (value.newChatCount.current == 0) {
-                  alert('No New chats');
-                } else {
-                  const sendObject = {action: 'agentPickupChat', chatId: ''};
-                  console.log('send Object', sendObject);
-                  messageService.sendMessage(sendObject);
-                }
+        <TouchableOpacity>
+          <Menu
+            style={{backfaceVisibility: 'visible'}}
+            name="notifyMenu"
+            onBackdropPress={console.log('on close menu')}>
+            <MenuTrigger onPress={console.log('Bell icon pressed')}>
+              <View style={styles.badgeSetup}>
+                <Image
+                  source={require('../../assets/notification_64.png')}
+                  style={styles.icon}
+                />
+                {value.newChatCount.current > 0 ? (
+                  <View
+                    style={[
+                      {
+                        position: 'absolute',
+                        backgroundColor: 'red',
+                        width: 12,
+                        height: 12,
+                        borderRadius: 15 / 2,
+                        right: 10,
+                        top: 0,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      },
+                      {display: blink ? 'flex' : 'none'},
+                    ]}>
+                    <Text
+                      style={{
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#FFFFFF',
+                        fontSize: 8,
+                      }}>
+                      {value.newChatCount.current}
+                    </Text>
+                  </View>
+                ) : (
+                  <View />
+                )}
+              </View>
+            </MenuTrigger>
+            <MenuOptions
+              ref={elementRef}
+              optionsContainerStyle={{
+                paddingLeft: 10,
+                height: 200,
+                width: 150,
+                flexDirection: 'column',
+                borderRadius: 15,
+                opacity: 5,
+                alignContent: 'flex-start',
+                backgroundColor: '#217eac',
+                borderStyle: 'solid',
               }}>
-              <Text style={styles.menuOptionText}>
-                Live Chats - {value.newChatCount.current.toString()}{' '}
-              </Text>
-            </MenuOption>
-            <MenuOption
-              onSelect={() => alert('No Transferred Chats')}
-              disabled={true}>
-              <Text style={styles.menuOptionText}>
-                Transferred Chat -{' '}
-                {value.transferredChatCount.current.toString()}{' '}
-              </Text>
-            </MenuOption>
-            <MenuOption
-              onSelect={() => {
-                //navigation.replace('JustInTime');
-              }}>
-              <Text style={styles.menuOptionText}>
-                Invite Chats - {value.invitedChatCount.current.toString()}{' '}
-              </Text>
-            </MenuOption>
-            <MenuOption
-              onSelect={() => {
-                //navigation.replace('JustInTime');
-              }}>
-              <Text style={styles.menuOptionText}>
-                Assigned Chats - {value.newChatCount.current.toString()}{' '}
-              </Text>
-            </MenuOption>
-            <MenuOption
-              onSelect={() => {
-                //navigation.replace('JustInTime');
-              }}>
-              <Text style={styles.menuOptionText}>
-                Missed Chats - {value.missedChatCount.current.toString()}{' '}
-              </Text>
-            </MenuOption>
-          </MenuOptions>
-        </Menu>
-
+              <MenuOption
+                style={{borderColor: 'red'}}
+                onSelect={() => {
+                  if (value.newChatCount.current == 0) {
+                    alert('No New chats');
+                  } else {
+                    const sendObject = {action: 'agentPickupChat', chatId: ''};
+                    console.log('send Object', sendObject);
+                    messageService.sendMessage(sendObject);
+                  }
+                }}>
+                <Text style={styles.menuOptionText}>
+                  Live Chats - {value.newChatCount.current.toString()}{' '}
+                </Text>
+              </MenuOption>
+              <MenuOption
+                onSelect={() => alert('No Transferred Chats')}
+                disabled={true}>
+                <Text style={styles.menuOptionText}>
+                  Transferred Chat -{' '}
+                  {value.transferredChatCount.current.toString()}{' '}
+                </Text>
+              </MenuOption>
+              <MenuOption
+                onSelect={() => {
+                  //navigation.replace('JustInTime');
+                }}>
+                <Text style={styles.menuOptionText}>
+                  Invite Chats - {value.invitedChatCount.current.toString()}{' '}
+                </Text>
+              </MenuOption>
+              <MenuOption
+                onSelect={() => {
+                  //navigation.replace('JustInTime');
+                }}>
+                <Text style={styles.menuOptionText}>
+                  Assigned Chats - {value.newChatCount.current.toString()}{' '}
+                </Text>
+              </MenuOption>
+              <MenuOption
+                onSelect={() => {
+                  //navigation.replace('JustInTime');
+                }}>
+                <Text style={styles.menuOptionText}>
+                  Missed Chats - {value.missedChatCount.current.toString()}{' '}
+                </Text>
+              </MenuOption>
+            </MenuOptions>
+          </Menu>
+        </TouchableOpacity>
         {/* <Menu
           name="SideMenu"
           style={{
@@ -224,7 +232,7 @@ let ChatHeader = () => {
   );
 };
 
-const ActiveChats = navigation => {
+const ActiveChats = () => {
   const value = useContext(GlobalContext);
   const [activeChatList, setActiveChatList] = useState(() => {
     activeChats()
@@ -257,10 +265,17 @@ const ActiveChats = navigation => {
                 navigation.navigate('IndividualChat', {chatId: item.chatId});
               }}>
               <View style={styles.item}>
-                <Image
-                  source={{uri: item.customerIconUrl}}
-                  style={styles.avatar}
-                />
+                {item.customerIconUrl ? (
+                  <Image
+                    source={{uri: item.customerIconUrl}}
+                    style={styles.avatar}
+                  />
+                ) : (
+                  <Image
+                    source={require('../../assets/boy_dummy.png')}
+                    style={styles.avatar}
+                  />
+                )}
                 <View style={styles.details}>
                   <Text style={styles.name}>{item.customerName}</Text>
                   <Text style={styles.lastMessage} key={index}>
@@ -281,65 +296,58 @@ const ActiveChats = navigation => {
         })}
       </ScrollView>
     ) : (
-      <View style={{alignContent: 'center'}}>
-        <Text style={{alignContent: 'center'}}>No Active Chats</Text>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <Text
+          style={{
+            textAlign: 'center',
+            alignSelf: 'center',
+          }}>
+          No Active Chats Found
+        </Text>
       </View>
     );
   } else {
-    return <Text> Loading.....</Text>;
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <Text
+          style={{
+            textAlign: 'center',
+            alignSelf: 'center',
+          }}>
+          <ActivityIndicator size="large" color="#217eac" />
+        </Text>
+      </View>
+    );
   }
 };
 
 const SuspendedChats = () => {
-  const navigation = useNavigation();
-  // setTimeout(() => {
-  // const value = useContext(GlobalContext);
-  //const [activeChatList, setActiveChatList] = useState([]);
-  console.log('Suspended chat tab-->');
-  // const tempList1;
   const [tempList1, setTempList1] = useState(() => {
     suspendedChats()
       .then(data => {
         console.log('suspended data-->', data);
         setTempList1(data.chats);
-
-        //value.closedChatList.current = data.chats;
-
-        //console.log('closed Chats in Global update2', value.closedChatList.current);
       })
       .catch(error => console.error('Error:', error));
   });
   useEffect(() => {}, [tempList1]);
-  // useEffect(() => {
-  //   if (value.closedChatList.current.length <= 0) {
-  //     closedChats()
-  //       .then(data => {
-  //         console.log('close data-->', data);
-
-  //         //value.closedChatList.current = data.chats;
-
-  //         console.log('closed Chats in Global update2', value.closedChatList.current);
-  //       })
-  //       .catch(error => console.error('Error:', error));
-  //   }
-  // });
-
-  // const tempList = React.useMemo(() => {
-  //   return value.closedChatList;
-  // }, [tempList]);
 
   if (tempList1) {
-    //console.log('ChatList', JSON.stringify(tempList.current));
-    return (
+    return tempList1.chats == [] ? (
       <ScrollView>
-        {/* <Text> Loading.....</Text> */}
         {tempList1.map((item, index) => {
           return (
-            <TouchableOpacity
-              key={index}
-              onPress={() => {
-                // navigation.navigate('ClosedChatView', {item});
-              }}>
+            <TouchableOpacity key={index} onPress={() => {}}>
               <View style={styles.item}>
                 {item.customerIconUrl ? (
                   <Image
@@ -366,9 +374,39 @@ const SuspendedChats = () => {
           );
         })}
       </ScrollView>
+    ) : (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <Text
+          style={{
+            textAlign: 'center',
+            alignSelf: 'center',
+          }}>
+          No Suspended Chats Found
+        </Text>
+      </View>
     );
   } else {
-    return <Text> Loading.....</Text>;
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <Text
+          style={{
+            textAlign: 'center',
+            alignSelf: 'center',
+          }}>
+          <ActivityIndicator size="large" color="#217eac" />
+        </Text>
+      </View>
+    );
   }
 };
 
@@ -411,10 +449,8 @@ const ClosedChats = () => {
   // }, [tempList]);
 
   if (tempList1) {
-    //console.log('ChatList', JSON.stringify(tempList.current));
-    return (
+    return tempList1 ? (
       <ScrollView>
-        {/* <Text> Loading.....</Text> */}
         {tempList1.map((item, index) => {
           return (
             <TouchableOpacity
@@ -448,9 +484,39 @@ const ClosedChats = () => {
           );
         })}
       </ScrollView>
+    ) : (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <Text
+          style={{
+            textAlign: 'center',
+            alignSelf: 'center',
+          }}>
+          No Closed Chats Found
+        </Text>
+      </View>
     );
   } else {
-    return <Text> Loading.....</Text>;
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <Text
+          style={{
+            textAlign: 'center',
+            alignSelf: 'center',
+          }}>
+          <ActivityIndicator size="large" color="#217eac" />
+        </Text>
+      </View>
+    );
   }
 };
 
@@ -535,26 +601,8 @@ let Tabs = () => {
   );
 };
 
-const ChatListPage = chats => {
-  console.log('re render issue testchatList', JSON.stringify(chats));
-  // useEffect(()=>{},[chats])
-  let value = {};
-  const [index, setIndex] = React.useState(0);
+const ChatListPage = () => {
   MenuTrigger.debug = true;
-  const data = [
-    {
-      customerIconUrl:
-        'https://qa.twixor.digital/moc/drive/docs/6324796f6d959c3eda71eff3',
-      customerName: '8190083902',
-      chatId: '65675656565',
-    },
-    {
-      customerIconUrl:
-        'https://qa.twixor.digital/moc/drive/docs/6324796f6d959c3eda71eff3',
-      customerName: '8190083903',
-      chatId: '65675656575',
-    },
-  ];
   return (
     <MenuProvider>
       <ChatHeader />

@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -7,52 +7,16 @@ import {
   TouchableOpacity,
   StyleSheet,
   FlatList,
-  TextInput,
   ScrollView,
-  Animated,
-  Dimensions,
-  TouchableWithoutFeedback,
-  KeyboardAvoidingView,
-  Platform,
-  Keyboard,
 } from 'react-native';
-import {useNavigation, StackActions} from '@react-navigation/native';
-
-import {messageService} from '../services/websocket';
-const {height} = Dimensions.get('screen');
-import {GlobalContext} from '../utils/globalupdate';
+import {useNavigation} from '@react-navigation/native';
 import {timeConversion} from '../utils/utilities';
-import {
-  Menu,
-  MenuOptions,
-  MenuOption,
-  MenuTrigger,
-  MenuProvider,
-} from 'react-native-popup-menu';
-
 import {closeChat} from '../services/api';
-import {useEffect} from 'react';
+
 let flatList = React.useRef(null);
 
 const ClosedChatView = route => {
-  const scrollY = React.useRef(new Animated.Value(0)).current;
-
-  const value = React.useContext(GlobalContext);
-
-  console.log('Loading Value--> ', JSON.stringify(value));
-
-  //   let chatId = route.route.params.chatId;
-  //   let chat = value.activeChatList.current.find(response => {
-  //     return response.chatId == chatId;
-  //   });
-
   let chat = route.route.params.item;
-
-  console.log('Chat using context', JSON.stringify(route));
-
-  //console.log('In individual chatparams-->', route.route.params.chatId);
-
-  console.log('In individual chat-->', JSON.stringify(chat));
 
   let ChatHeader = () => {
     const navigation = useNavigation();
@@ -63,12 +27,7 @@ const ClosedChatView = route => {
           <TouchableOpacity
             style={styles.backButton}
             onPress={() => {
-              //  navigation.dispatch(StackActions.popToTop())
-              console.log(navigation.canGoBack());
-
-              //navigation.replace('ChatListPage');
-             navigation.goBack()
-              // navigation.dispatch(StackActions.pop(1))
+              navigation.goBack();
             }}>
             <Image
               source={require('../../assets/chevron-left-solid.png')}
@@ -87,39 +46,18 @@ const ClosedChatView = route => {
                 style={styles.avatar}
               />
             )}
-            {/* <Image source={{uri: chat.customerIconUrl}} style={styles.avatar} /> */}
+
             <View style={styles.textContainer}>
               <Text style={styles.title}>{chat.customerName}</Text>
-              <Text style={styles.subtitle}>{}</Text>
+              <Text style={styles.subtitle}>Offline</Text>
             </View>
           </View>
           <View></View>
           <TouchableOpacity
             onPress={() => {
               closeChat(chat.chatId);
-              console.log('Chat closed');
-              console.log(navigation.canGoBack());
-              //navigation.goBack()
               navigation.replace('ChatListPage');
-              //navigation.replace('ChatListPage');
-            }}>
-            {/* <View
-              style={{
-                paddingBottom: 5,
-                width: 60,
-                backgroundColor: '#5CB3FF',
-                borderRadius: 6,
-                paddingLeft: 5,
-                elevation: 3,
-              }}>
-              <Text
-                style={{fontSize: 14, color: 'white', alignItems: 'center'}}>
-                Close Chat
-              </Text>
-
-            
-            </View> */}
-          </TouchableOpacity>
+            }}></TouchableOpacity>
         </View>
       </SafeAreaView>
     );
@@ -193,99 +131,18 @@ const ClosedChatView = route => {
         />
       );
     } else {
-      return <Text> Loading.....</Text>;
+      return (
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <ActivityIndicator size="large" color="#217eac" />
+        </View>
+      );
     }
-  };
-
-  let ChatFooter = () => {
-    let [message, setMessage] = React.useState('');
-
-    let handleSendMessage = () => {
-      console.log(message);
-      const sendObject = {
-        action: 'agentReplyChat',
-        eId: chat.eId,
-        message: message,
-        contentType: 'TEXT',
-        chatId: chat.chatId,
-        attachment: {},
-        pickup: false,
-      };
-      console.log('send Object', sendObject);
-      messageService.sendMessage(sendObject);
-      setMessage('');
-    };
-
-    return (
-      // <SafeAreaView style={{backgroundColor: 'white'}}>
-      //   <View style={styles.footerContainer}>
-      //     <TouchableOpacity style={styles.attachmentButton}>
-      //       <Image
-      //         source={require('../../assets/add_128.png')}
-      //         style={styles.attachmentIcon}
-      //       />
-      //     </TouchableOpacity>
-      //     <TextInput
-      //       style={styles.input}
-      //       value={message}
-      //       onChangeText={setMessage}
-      //       placeholder="Type a message"
-      //       multiline
-      //     />
-      //     <TouchableOpacity
-      //       style={styles.sendButton}
-      //       onPress={handleSendMessage}>
-      //       <Image
-      //         source={require('../../assets/send_128.png')}
-      //         style={styles.sendIcon}
-      //       />
-      //     </TouchableOpacity>
-      //   </View>
-      // </SafeAreaView>
-      <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <SafeAreaView style={{backgroundColor: 'white'}}>
-          <View style={styles.footercontainer}>
-            {message.length > 0 ? null : (
-              <TouchableOpacity
-                style={styles.attachmentButton}
-                onPress={() => setModalVisible(true)}>
-                <Image
-                  source={require('../../assets/add_128.png')}
-                  style={styles.attachmentIcon}
-                />
-              </TouchableOpacity>
-            )}
-            <TextInput
-              style={styles.input}
-              value={message}
-              onChangeText={setMessage}
-              placeholder="Type a message"
-              multiline
-            />
-            {message.length > 0 ? (
-              <TouchableOpacity
-                style={styles.sendButton}
-                onPress={handleSendMessage}>
-                <Image
-                  source={require('../../assets/send_128.png')}
-                  style={styles.sendIcon}
-                />
-              </TouchableOpacity>
-            ) : null}
-          </View>
-        </SafeAreaView>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
-    );
   };
 
   return (
     <>
       <ChatHeader />
       <ChatBody />
-      {/* <ChatFooter /> */}
     </>
   );
 };
@@ -295,7 +152,7 @@ let styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    height: 50,
+    height: 60,
     backgroundColor: 'white',
     paddingHorizontal: 16,
     borderBottomColor: '#DDDDDD',

@@ -1,4 +1,5 @@
 {
   "name": "TwixorAgentTestingApp",
-  "displayName": "TwixorAgentTestingApp"
+  "displayName": "TwixorAgentTestingApp",
+  "icon": "./assets/logo.png"
 }

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
   View,
   Text,
@@ -9,13 +9,13 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import Variables from 'chatagentsdk/src/utils/variables';
-import { ChatScreen } from 'chatagentsdk/src/utils/globalupdate';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import {ChatScreen} from 'chatagentsdk/src/utils/globalupdate';
+import {NavigationContainer, useNavigation} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
 import JustInTime from 'chatagentsdk/src/screens/JustInScreen';
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Platform } from 'react-native';
+import {Platform} from 'react-native';
 import firebase from '@react-native-firebase/app';
 import PushNotification from 'react-native-push-notification';
 
@@ -36,13 +36,13 @@ export default function ChatParent() {
       Platform.OS === 'android' ? 0 : Platform.OS === 'ios' ? 1 : -1;
     !firebase.apps.length
       ? firebase.initializeApp({
-        appId: '1:584671962460:android:e3953e51e628066a844d99',
-        apiKey: 'AIzaSyClYkkEi7IvXOLzTf_v9cX3SvZrwEc5nck',
-        databaseURL: 'x',
-        storageBucket: 'twixorchatagentsdk.appspot.com',
-        messagingSenderId: 'x',
-        projectId: 'twixorchatagentsdk',
-      })
+          appId: '1:584671962460:android:e3953e51e628066a844d99',
+          apiKey: 'AIzaSyClYkkEi7IvXOLzTf_v9cX3SvZrwEc5nck',
+          databaseURL: 'x',
+          storageBucket: 'twixorchatagentsdk.appspot.com',
+          messagingSenderId: 'x',
+          projectId: 'twixorchatagentsdk',
+        })
       : firebase.app();
 
     requestUserPermission();
@@ -75,7 +75,7 @@ export default function ChatParent() {
             );
           }
         })
-        .then(() => { })
+        .then(() => {})
         .catch(error => {
           console.error('API Error:', error);
           console.log('response ------', error);
@@ -145,8 +145,10 @@ export default function ChatParent() {
     deviceTokenRef.current = getfcmToken;
   };
 
-  const notificationListener = React.useCallback(navigation => {
+  const notificationListener = React.useCallback(() => {
+
     messaging().onNotificationOpenedApp(remoteMessage => {
+      const navigation = useNavigation();
       console.log(
         'Notification caused app to open from background state:',
         remoteMessage.data,
@@ -157,14 +159,14 @@ export default function ChatParent() {
     messaging().onMessage(async remoteMessage => {
       console.log(
         'Message received in foreground',
-        remoteMessage.notification.body,
+        remoteMessage.notification,
       );
     });
 
     messaging().setBackgroundMessageHandler(async remoteMessage => {
       console.log(
         'Message received in Background',
-        remoteMessage.notification.body,
+        remoteMessage.notification,
       );
       // let title = '';
       // let body = '';
@@ -219,22 +221,22 @@ export default function ChatParent() {
           <Stack.Screen
             name="LoginScreen"
             component={LoginScreen}
-            options={{ headerShown: false }}
+            options={{headerShown: false}}
           />
           <Stack.Screen
             name="BlankPage"
             component={BlankPage}
-            options={{ headerShown: false }}
+            options={{headerShown: false}}
           />
           <Stack.Screen
             name="ChatScreen"
             component={ChatScreen}
-            options={{ headerShown: false }}
+            options={{headerShown: false}}
           />
           <Stack.Screen
             name="JustInTime"
             component={JustInTime}
-            options={{ headerShown: false }}
+            options={{headerShown: false}}
           />
         </Stack.Navigator>
       </NavigationContainer>
@@ -355,7 +357,7 @@ LoginScreen = () => {
   );
 };
 
-BlankPage = ({ route }) => {
+BlankPage = ({route}) => {
   const navigation = useNavigation();
 
   const propDetails = {

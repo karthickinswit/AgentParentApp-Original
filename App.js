@@ -50,7 +50,7 @@ export default function ChatParent() {
     notificationListener();
     setTimeout(() => {
       console.log('Device Token In App.js -----', deviceTokenRef.current);
-      fetch('https://qa.twixor.digital/moc/e/enterprise/add_deviceId', {
+      fetch('https://dc67-210-18-155-241.ngrok-free.app/MeOnCloud/e/enterprise/add_deviceId', {
         method: 'POST',
         headers: {
           Accept: 'application/json',

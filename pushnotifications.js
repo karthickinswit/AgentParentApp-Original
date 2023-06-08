@@ -57,10 +57,6 @@ export const notificationListener = React.useCallback(navigation => {
     });
 });
 
-// const ACTIVE_CHATS = 'https://qa.twixor.digital/moc/e/enterprise/chat/summary';
-// const CLOSED_CHATS = 'https://qa.twixor.digital/moc/e/enterprise/chat/summary';
-// const TOKEN =
-//   'uKJkA3WW1DeuZOzF2hZytmrzax8E28DdBqM/TZffOH8fXZJCEMLuKFgxM9RtZPcl';
 const TEST_API = 'https://63bfe4bea177ed68abbaa502.mockapi.io/chatlist';
 
 export async function testChats() {

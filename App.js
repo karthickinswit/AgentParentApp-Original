@@ -18,6 +18,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Platform} from 'react-native';
 import firebase from '@react-native-firebase/app';
 import PushNotification from 'react-native-push-notification';
+import axios from 'axios';
 
 const Stack = createStackNavigator();
 
@@ -30,59 +31,100 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
 
 export default function ChatParent() {
   const deviceTokenRef = useRef('');
+  const [token, setToken] = useState(null);
+
+  useEffect(() => {
+    checkToken();
+  }, []);
+
+  const checkToken = async () => {
+    const storedToken = await AsyncStorage.getItem('token');
+    setToken(storedToken);
+  };
 
   useEffect(() => {
     const mobileType =
       Platform.OS === 'android' ? 0 : Platform.OS === 'ios' ? 1 : -1;
-    !firebase.apps.length
-      ? firebase.initializeApp({
-          appId: '1:584671962460:android:e3953e51e628066a844d99',
-          apiKey: 'AIzaSyClYkkEi7IvXOLzTf_v9cX3SvZrwEc5nck',
-          databaseURL: 'x',
-          storageBucket: 'twixorchatagentsdk.appspot.com',
-          messagingSenderId: 'x',
-          projectId: 'twixorchatagentsdk',
-        })
-      : firebase.app();
-
+    // !firebase.apps.length
+    //   ? firebase.initializeApp({
+    //       appId: '1:584671962460:android:e3953e51e628066a844d99',
+    //       apiKey: 'AIzaSyClYkkEi7IvXOLzTf_v9cX3SvZrwEc5nck',
+    //       databaseURL: 'x',
+    //       storageBucket: 'twixorchatagentsdk.appspot.com',
+    //       messagingSenderId: 'x',
+    //       projectId: 'twixorchatagentsdk',
+    //     })
+    //   : firebase.app();
+    firebase.app();
     requestUserPermission();
     fcmToken();
     notificationListener();
+
     setTimeout(() => {
-      console.log('Device Token In App.js -----', deviceTokenRef.current);
-      fetch('https://dc67-210-18-155-241.ngrok-free.app/MeOnCloud/e/enterprise/add_deviceId', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          deviceType: mobileType,
-          registrationId: deviceTokenRef.current,
-        }),
-      })
-        .then(response => {
-          if (response.status >= 200 && response.status < 300) {
-            const contentType = response.headers.get('content-type');
-            if (contentType && contentType.indexOf('application/json') !== -1) {
-              return response;
-            } else {
-              console.log('response in API ------', response);
-            }
-          } else {
-            throw new Error(
-              'API Error: Server responded with status ' + response.status,
-            );
-          }
-        })
-        .then(() => {})
-        .catch(error => {
-          console.error('API Error:', error);
-          console.log('response ------', error);
-        });
+      addDeviceId();
+      // console.log('Device Token In App.js -----', deviceTokenRef.current);
+      // console.log('data passsed', mobileType, deviceTokenRef.current);
+      // fetch(
+      //   'https://b0b3-210-18-155-241.in.ngrok.io/MeOnCloud/e/enterprise/add_deviceId',
+      //   {
+      //     method: 'PUT',
+      //     headers: {
+      //       Accept: 'application/json',
+      //       'Content-Type': 'application/json',
+      //     },
+      //     body: {
+      //       deviceType: new Number(mobileType),
+      //       registrationId: deviceTokenRef.current,
+      //     },
+      //   },
+      // )
+      //   .then(response => {
+      //     if (response.status >= 200 && response.status < 300) {
+      //       const contentType = response.headers.get('content-type');
+      //       if (contentType && contentType.indexOf('application/json') !== -1) {
+      //         return response;
+      //       } else {
+      //         //console.log('response in API ------', response);
+      //       }
+      //     } else {
+      //       throw new Error(
+      //         'API Error: Server responded with status ' + response.status,
+      //       );
+      //     }
+      //   })
+      //   .then(() => {})
+      //   .catch(error => {
+      //     // console.error('API Error:', error);
+      //     // console.log('response ------', error);
+      //   });
     }, 0);
     //showLocalNotification();
   });
+
+  const addDeviceId = async () => {
+    const mobileType =
+      Platform.OS === 'android' ? 0 : Platform.OS === 'ios' ? 1 : -1;
+    const token =
+      'wuAqCJiMP/gudvC9sJW8oJ4xaJaNd90BCXCsmrcF1scfXZJCEMLuKFgxM9RtZPcl';
+    const url =
+      'https://b0b3-210-18-155-241.in.ngrok.io/MeOnCloud/e/enterprise/add_deviceId';
+    const headers = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      'authentication-token': token,
+    };
+    const body = {
+      deviceType: mobileType,
+      registrationId: deviceTokenRef.current,
+    };
+
+    try {
+      const response = await axios.put(url, body, {headers});
+      //console.log('Request successful in Axios:', response);
+    } catch (error) {
+      console.error('Request failed:', error);
+    }
+  };
 
   function showLocalNotification() {
     let title = '';
@@ -146,7 +188,6 @@ export default function ChatParent() {
   };
 
   const notificationListener = React.useCallback(() => {
-
     messaging().onNotificationOpenedApp(remoteMessage => {
       const navigation = useNavigation();
       console.log(
@@ -157,17 +198,11 @@ export default function ChatParent() {
     });
 
     messaging().onMessage(async remoteMessage => {
-      console.log(
-        'Message received in foreground',
-        remoteMessage.notification,
-      );
+      console.log('Message received in foreground', remoteMessage.notification);
     });
 
     messaging().setBackgroundMessageHandler(async remoteMessage => {
-      console.log(
-        'Message received in Background',
-        remoteMessage.notification,
-      );
+      console.log('Message received in Background', remoteMessage);
       // let title = '';
       // let body = '';
 
@@ -250,6 +285,7 @@ LoginScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [authToken, setAuthToken] = useState('');
   const navigation = useNavigation();
 
   const ValidateEmail = username => {
@@ -270,10 +306,11 @@ LoginScreen = () => {
       if (res.status && res.response.token) {
         setIsLoading(false);
         setIsSuccess(true);
+        setAuthToken(res.response.token);
         setTimeout(() => {
           navigation.navigate('BlankPage', {
             username: username,
-            token: res.response.token,
+            token: authToken,
             uId: res.response.uId,
           });
         }, 10);
@@ -297,7 +334,7 @@ LoginScreen = () => {
     payload.appId = 'MOC';
 
     const LoginUri = await fetch(
-      `https://qa.twixor.digital/moc/account/enterprise/login/twoFactorAuth?email=${encodeURIComponent(
+      `https://b0b3-210-18-155-241.in.ngrok.io/MeOnCloud/account/enterprise/login/twoFactorAuth?email=${encodeURIComponent(
         payload.email,
       )}&&password=${encodeURIComponent(
         payload.password,
@@ -310,6 +347,14 @@ LoginScreen = () => {
       },
     );
     const LoginResponse = await LoginUri.json();
+
+    AsyncStorage.setItem('loginToken', LoginResponse.response.token)
+      .then(() => {
+        console.log('Login token stored successfully');
+      })
+      .catch(error => {
+        console.log('Error storing login token:', error);
+      });
 
     return LoginResponse;
   }
@@ -359,13 +404,32 @@ LoginScreen = () => {
 
 BlankPage = ({route}) => {
   const navigation = useNavigation();
+  const deviceTokenRef = useRef('');
+  const [authToken, setAuthToken] = useState('');
+
+  useEffect(() => {
+    AsyncStorage.getItem('loginToken')
+      .then(token => {
+        // console.log('Login token retrieved:', token);
+        setAuthToken(token);
+      })
+      .catch(error => {
+        // console.log('Error retrieving login token:', error);
+      });
+  }, []);
 
   const propDetails = {
     name: route.params.username,
     token: route.params.token,
     userId: route.params.uId,
-    baseUrl: 'https://qa.twixor.digital/moc',
+    baseUrl: 'https://b0b3-210-18-155-241.in.ngrok.io/MeOnCloud',
   };
+
+  React.useEffect(() => {
+    fcmToken();
+    addDeviceId();
+    return () => {};
+  }, [authToken]);
 
   const HandleClick = async () => {
     Variables.API_URL = propDetails.baseUrl;
@@ -383,6 +447,47 @@ BlankPage = ({route}) => {
     navigation.navigate('JustInTime', {
       userDetails: propDetails,
     });
+  };
+
+  const fcmToken = async () => {
+    let getfcmToken = await AsyncStorage.getItem('fcmToken');
+    if (!getfcmToken) {
+      try {
+        getfcmToken = await messaging().getToken();
+        if (getfcmToken) {
+          await AsyncStorage.setItem('fcmToken', getfcmToken);
+        }
+      } catch (error) {
+        console.log('Error in Fcm Token', error);
+      }
+    }
+    deviceTokenRef.current = getfcmToken;
+  };
+
+  const addDeviceId = () => {
+    const apiUrl = `https://b0b3-210-18-155-241.in.ngrok.io/MeOnCloud/e/enterprise/add_deviceId`;
+    const requestBody = {
+      deviceType:
+        Platform.OS === 'android' ? 0 : Platform.OS === 'ios' ? 1 : null,
+      registrationId: deviceTokenRef.current,
+    };
+
+    fetch(apiUrl, {
+      method: 'PUT',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'authentication-token': authToken,
+      },
+      body: requestBody,
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+      })
+      .catch(error => {
+        console.error(error);
+      });
   };
 
   return (

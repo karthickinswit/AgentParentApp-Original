@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
+  Button
 } from 'react-native';
 import Variables from 'chatagentsdk/src/utils/variables';
 import {ChatScreen} from 'chatagentsdk/src/utils/globalupdate';
@@ -65,7 +66,7 @@ export default function ChatParent() {
       // console.log('Device Token In App.js -----', deviceTokenRef.current);
       // console.log('data passsed', mobileType, deviceTokenRef.current);
       // fetch(
-      //   'https://b0b3-210-18-155-241.in.ngrok.io/MeOnCloud/e/enterprise/add_deviceId',
+      //   'https://c737-210-18-155-241.in.ngrok.io/MeOnCloud/e/enterprise/add_deviceId',
       //   {
       //     method: 'PUT',
       //     headers: {
@@ -107,7 +108,7 @@ export default function ChatParent() {
     const token =
       'wuAqCJiMP/gudvC9sJW8oJ4xaJaNd90BCXCsmrcF1scfXZJCEMLuKFgxM9RtZPcl';
     const url =
-      'https://b0b3-210-18-155-241.in.ngrok.io/MeOnCloud/e/enterprise/add_deviceId';
+      'https://c737-210-18-155-241.in.ngrok.io/MeOnCloud/e/enterprise/add_deviceId';
     const headers = {
       Accept: 'application/json',
       'Content-Type': 'application/json',
@@ -334,7 +335,7 @@ LoginScreen = () => {
     payload.appId = 'MOC';
 
     const LoginUri = await fetch(
-      `https://b0b3-210-18-155-241.in.ngrok.io/MeOnCloud/account/enterprise/login/twoFactorAuth?email=${encodeURIComponent(
+      `https://c737-210-18-155-241.in.ngrok.io/MeOnCloud/account/enterprise/login/twoFactorAuth?email=${encodeURIComponent(
         payload.email,
       )}&&password=${encodeURIComponent(
         payload.password,
@@ -346,6 +347,7 @@ LoginScreen = () => {
         method: 'POST',
       },
     );
+
     const LoginResponse = await LoginUri.json();
 
     AsyncStorage.setItem('loginToken', LoginResponse.response.token)
@@ -422,7 +424,7 @@ BlankPage = ({route}) => {
     name: route.params.username,
     token: route.params.token,
     userId: route.params.uId,
-    baseUrl: 'https://b0b3-210-18-155-241.in.ngrok.io/MeOnCloud',
+    baseUrl: 'https://c737-210-18-155-241.in.ngrok.io/MeOnCloud',
   };
 
   React.useEffect(() => {
@@ -465,12 +467,14 @@ BlankPage = ({route}) => {
   };
 
   const addDeviceId = () => {
-    const apiUrl = `https://b0b3-210-18-155-241.in.ngrok.io/MeOnCloud/e/enterprise/add_deviceId`;
+    const apiUrl = `https://c737-210-18-155-241.in.ngrok.io/MeOnCloud/e/enterprise/add_deviceId`;
     const requestBody = {
       deviceType:
         Platform.OS === 'android' ? 0 : Platform.OS === 'ios' ? 1 : null,
       registrationId: deviceTokenRef.current,
     };
+
+    console.log('requestBody', requestBody);
 
     fetch(apiUrl, {
       method: 'PUT',
@@ -481,7 +485,7 @@ BlankPage = ({route}) => {
       },
       body: requestBody,
     })
-      .then(response => response.json())
+      .then(response => console.log(response))
       .then(data => {
         console.log(data);
       })

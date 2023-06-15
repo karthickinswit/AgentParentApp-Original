@@ -23,8 +23,9 @@ import {
 } from 'react-native';
 import {useNavigation, StackActions} from '@react-navigation/native';
 
+
 import {messageService} from '../services/websocket';
-const {height} = Dimensions.get('screen');
+const {height} = Dimensions.get('window');
 import {GlobalContext} from '../utils/globalupdate';
 import {timeConversion} from '../utils/utilities';
 import {MenuProvider} from 'react-native-popup-menu';
@@ -179,6 +180,17 @@ const IndividualChat = route => {
   };
 
   let ChatFooter = () => {
+    const [modalVisible, setModalVisible] = React.useState(false);
+    const [selectedImage, setSelectedImage] = React.useState(null);
+
+    const openModal = () => {
+      setModalVisible(true);
+    };
+
+    const closeModal = () => {
+      setModalVisible(false);
+    };
+
     let [message, setMessage] = React.useState('');
 
     let handleSendMessage = () => {
@@ -197,6 +209,50 @@ const IndividualChat = route => {
       setMessage('');
     };
 
+    const imageModal = () => {
+      const [modalVisible, setModalVisible] = useState(false);
+
+      const openModal = () => {
+        setModalVisible(true);
+      };
+
+      const closeModal = () => {
+        setModalVisible(false);
+      };
+
+      return (
+        <View style={styles.container}>
+          <Button title="Open Modal" onPress={openModal} />
+
+          <Modal
+            visible={modalVisible}
+            transparent={true}
+            animationType="slide"
+            onRequestClose={closeModal}>
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <TouchableOpacity
+                  style={styles.buttonModal}
+                  onPress={closeModal}>
+                  <Text style={styles.buttonTextModal}>Button 1</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.buttonModal}
+                  onPress={closeModal}>
+                  <Text style={styles.buttonTextModal}>Button 2</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.buttonModal}
+                  onPress={closeModal}>
+                  <Text style={styles.buttonTextModal}>Button 3</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
+        </View>
+      );
+    };
+
     return (
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
@@ -204,7 +260,9 @@ const IndividualChat = route => {
           <SafeAreaView style={{backgroundColor: 'white'}}>
             <View style={styles.footercontainer}>
               {message.length > 0 ? null : (
-                <TouchableOpacity style={styles.attachmentButton}>
+                <TouchableOpacity
+                  style={styles.attachmentButton}
+                  onPress={openModal}>
                   <Image
                     source={require('../../assets/add_128.png')}
                     style={styles.attachmentIcon}
@@ -228,6 +286,31 @@ const IndividualChat = route => {
                   />
                 </TouchableOpacity>
               ) : null}
+              <Modal
+                visible={modalVisible}
+                transparent={true}
+                animationType="slide"
+                onRequestClose={closeModal}>
+                <View style={styles.modalContainer}>
+                  <View style={styles.modalContent}>
+                    <TouchableOpacity
+                      style={styles.buttonModal}
+                      onPress={closeModal}>
+                      <Text style={styles.buttonTextModal}>Photo/Video Library</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.buttonModal}
+                      onPress={closeModal}>
+                      <Text style={styles.buttonTextModal}>Location</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.buttonModal}
+                      onPress={closeModal}>
+                      <Text style={styles.buttonTextModal}>Documents</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </Modal>
             </View>
           </SafeAreaView>
         </TouchableWithoutFeedback>
@@ -245,6 +328,35 @@ const IndividualChat = route => {
 };
 
 let styles = StyleSheet.create({
+  containerModal: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width: '80%',
+    height: height / 3,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 20,
+  },
+  buttonModal: {
+    marginBottom: 10,
+    padding: 10,
+    backgroundColor: '#217eac',
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  buttonTextModal: {
+    color: 'white',
+    fontSize: 16,
+  },
   containerCnf: {
     alignItems: 'center',
     marginVertical: 10,

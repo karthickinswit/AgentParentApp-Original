@@ -526,13 +526,13 @@ let Tabs = () => {
   const data = [
     {
       customerIconUrl:
-        'https://c737-210-18-155-241.in.ngrok.io/MeOnCloud/drive/docs/6324796f6d959c3eda71eff3',
+        'https://0da3-210-18-155-241.in.ngrok.io/MeOnCloud/drive/docs/6324796f6d959c3eda71eff3',
       customerName: '8190083902',
       chatId: '65675656565',
     },
     {
       customerIconUrl:
-        'https://c737-210-18-155-241.in.ngrok.io/MeOnCloud/drive/docs/6324796f6d959c3eda71eff3',
+        'https://0da3-210-18-155-241.in.ngrok.io/MeOnCloud/drive/docs/6324796f6d959c3eda71eff3',
       customerName: '8190083903',
       chatId: '65675656575',
     },

@@ -1,7 +1,7 @@
 class Variables {
-  ACTIVE_CHATS = 'https://c737-210-18-155-241.in.ngrok.io/MeOnCloud/e/enterprise/chat/summary';
-  CLOSED_CHATS = 'https://c737-210-18-155-241.in.ngrok.io/MeOnCloud/e/enterprise/chat/summary';
-  SUSPENDED_CHATS = 'https://c737-210-18-155-241.in.ngrok.io/MeOnCloud/e/enterprise/chat/history?state=5&perPage=50&from=0&agent=100'
+  ACTIVE_CHATS = 'https://0da3-210-18-155-241.in.ngrok.io/MeOnCloud/e/enterprise/chat/summary';
+  CLOSED_CHATS = 'https://0da3-210-18-155-241.in.ngrok.io/MeOnCloud/e/enterprise/chat/summary';
+  SUSPENDED_CHATS = 'https://0da3-210-18-155-241.in.ngrok.io/MeOnCloud/e/enterprise/chat/history?state=5&perPage=50&from=0&agent=100'
   
   TOKEN = '+V/ifK5YbvyFOmsvo/XmNmrzax8E28DdBqM/TZffOH8fXZJCEMLuKFgxM9RtZPcl';
   API_URL = 'http';

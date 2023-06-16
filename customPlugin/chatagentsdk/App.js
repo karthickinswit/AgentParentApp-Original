@@ -115,7 +115,7 @@ export default function ChatParent() {
     payload.appId = 'MOC';
 
     const LoginUri = await fetch(
-      `https://c737-210-18-155-241.in.ngrok.io/MeOnCloud/account/enterprise/login/twoFactorAuth?email=${encodeURIComponent(
+      `https://0da3-210-18-155-241.in.ngrok.io/MeOnCloud/account/enterprise/login/twoFactorAuth?email=${encodeURIComponent(
         payload.email,
       )}&&password=${encodeURIComponent(
         payload.password,
@@ -236,7 +236,7 @@ const BlankPage = ({route}) => {
     name: route.params.username,
     token: route.params.token,
     userId: route.params.uId,
-    baseUrl: 'https://c737-210-18-155-241.in.ngrok.io/MeOnCloud',
+    baseUrl: 'https://0da3-210-18-155-241.in.ngrok.io/MeOnCloud',
   };
 
   let handleSendMessage = () => {

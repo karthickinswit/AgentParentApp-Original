@@ -352,7 +352,7 @@ LoginScreen = () => {
 
     AsyncStorage.setItem('loginToken', LoginResponse.response.token)
       .then(() => {
-        console.log('Login token stored successfully');
+        //console.log('Login token stored successfully');
       })
       .catch(error => {
         console.log('Error storing login token:', error);
@@ -412,17 +412,17 @@ BlankPage = ({route}) => {
   useEffect(() => {
     AsyncStorage.getItem('loginToken')
       .then(token => {
-        console.log('Login token retrieved:', token);
+        console.log('Login token', token);
         setAuthToken(token);
       })
       .catch(error => {
-        console.log('Error retrieving login token:', error);
+        //console.log('Error retrieving login token:', error);
       });
   }, []);
 
   const propDetails = {
     name: route.params.username,
-    token: route.params.token,
+    token: authToken,
     userId: route.params.uId,
     baseUrl: 'https://0da3-210-18-155-241.in.ngrok.io/MeOnCloud',
   };
@@ -473,7 +473,8 @@ BlankPage = ({route}) => {
       registrationId: deviceTokenRef.current,
     };
 
-    console.log('requestBody', requestBody, authToken);
+    //console.log('requestBody', requestBody, authToken);
+    console.log("Fcm Token", deviceTokenRef.current);
 
     fetch(apiUrl, {
       method: 'PUT',
@@ -486,7 +487,7 @@ BlankPage = ({route}) => {
     })
       .then(response => response.text())
       .then(data => {
-        console.log('data',data);
+        console.log('Device Added Successfully',data);
       })
       .catch(error => {
         console.error(error);
@@ -495,7 +496,7 @@ BlankPage = ({route}) => {
 
   return (
     <>
-      <Text style={styles1.helloText}>Hello {route.params.username} + {route.params.token} </Text>
+      <Text style={styles1.helloText}>Hello {route.params.username}</Text>
       <View style={styles1.containerNewFab}>
         <TouchableOpacity
           style={styles1.buttonNewFab}

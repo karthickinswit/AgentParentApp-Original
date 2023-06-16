@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
-  Button
+  Button,
 } from 'react-native';
 import Variables from 'chatagentsdk/src/utils/variables';
 import {ChatScreen} from 'chatagentsdk/src/utils/globalupdate';
@@ -412,11 +412,11 @@ BlankPage = ({route}) => {
   useEffect(() => {
     AsyncStorage.getItem('loginToken')
       .then(token => {
-        // console.log('Login token retrieved:', token);
+        console.log('Login token retrieved:', token);
         setAuthToken(token);
       })
       .catch(error => {
-        // console.log('Error retrieving login token:', error);
+        console.log('Error retrieving login token:', error);
       });
   }, []);
 
@@ -430,7 +430,6 @@ BlankPage = ({route}) => {
   React.useEffect(() => {
     fcmToken();
     addDeviceId();
-    return () => {};
   }, [authToken]);
 
   const HandleClick = async () => {
@@ -474,7 +473,7 @@ BlankPage = ({route}) => {
       registrationId: deviceTokenRef.current,
     };
 
-    console.log('requestBody', requestBody);
+    console.log('requestBody', requestBody, authToken);
 
     fetch(apiUrl, {
       method: 'PUT',
@@ -485,9 +484,9 @@ BlankPage = ({route}) => {
       },
       body: requestBody,
     })
-      .then(response => console.log(response))
+      .then(response => response.text())
       .then(data => {
-        console.log(data);
+        console.log('data',data);
       })
       .catch(error => {
         console.error(error);
@@ -496,7 +495,7 @@ BlankPage = ({route}) => {
 
   return (
     <>
-      <Text style={styles1.helloText}>Hello {route.params.username}</Text>
+      <Text style={styles1.helloText}>Hello {route.params.username} + {route.params.token} </Text>
       <View style={styles1.containerNewFab}>
         <TouchableOpacity
           style={styles1.buttonNewFab}

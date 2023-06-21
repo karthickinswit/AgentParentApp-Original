@@ -91,7 +91,7 @@ export async function closedChats() {
 export async function getBroadCastList() {
   return new Promise((resolve, reject) => {
     var url =
-      'https://a8e6-210-18-155-241.in.ngrok.io/MeOnCloud/chatbird/api/broadcast?name=&from=0&perPage=20&fromDate=2023-03-07T18:30:00.000Z&toDate=2023-03-15T18:29:00.000Z';
+      'https://8965-210-18-155-241.in.ngrok.io/MeOnCloud/chatbird/api/broadcast?name=&from=0&perPage=20&fromDate=2023-03-07T18:30:00.000Z&toDate=2023-03-15T18:29:00.000Z';
     const xhr = new XMLHttpRequest();
     xhr.open('GET', url);
     xhr.setRequestHeader('authentication-token', Variables.TOKEN);
@@ -235,7 +235,7 @@ export async function sendTemplateApi(payloadData) {
           templateUId: 2127923597404786,
           media: {
             type: 'IMAGE',
-            url: 'https://a8e6-210-18-155-241.in.ngrok.io/MeOnCloud/drive/docs/641808be725d0417bb2315f5',
+            url: 'https://8965-210-18-155-241.in.ngrok.io/MeOnCloud/drive/docs/641808be725d0417bb2315f5',
           },
         },
       },
@@ -249,7 +249,7 @@ export async function sendTemplateApi(payloadData) {
           templateUId: payloadData.templateValue.templateId,
           // "media": {
           //     "type": "IMAGE",
-          //     "url": "https://a8e6-210-18-155-241.in.ngrok.io/MeOnCloud/drive/docs/641808be725d0417bb2315f5"
+          //     "url": "https://8965-210-18-155-241.in.ngrok.io/MeOnCloud/drive/docs/641808be725d0417bb2315f5"
           // }
         },
       },

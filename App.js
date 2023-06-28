@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,15 +8,17 @@ import {
   StyleSheet,
   ActivityIndicator,
   Button,
+  PermissionsAndroid,
+  Alert
 } from 'react-native';
 import Variables from 'chatagentsdk/src/utils/variables';
-import {ChatScreen} from 'chatagentsdk/src/utils/globalupdate';
-import {NavigationContainer, useNavigation} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
+import { ChatScreen } from 'chatagentsdk/src/utils/globalupdate';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import JustInTime from 'chatagentsdk/src/screens/JustInScreen';
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Platform} from 'react-native';
+import { Platform } from 'react-native';
 import firebase from '@react-native-firebase/app';
 import PushNotification from 'react-native-push-notification';
 import axios from 'axios';
@@ -120,7 +122,7 @@ export default function ChatParent() {
     };
 
     try {
-      const response = await axios.put(url, body, {headers});
+      const response = await axios.put(url, body, { headers });
       //console.log('Request successful in Axios:', response);
     } catch (error) {
       console.error('Request failed:', error);
@@ -257,22 +259,22 @@ export default function ChatParent() {
           <Stack.Screen
             name="LoginScreen"
             component={LoginScreen}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="BlankPage"
             component={BlankPage}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="ChatScreen"
             component={ChatScreen}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="JustInTime"
             component={JustInTime}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
         </Stack.Navigator>
       </NavigationContainer>
@@ -404,7 +406,7 @@ LoginScreen = () => {
   );
 };
 
-BlankPage = ({route}) => {
+BlankPage = ({ route }) => {
   const navigation = useNavigation();
   const deviceTokenRef = useRef('');
   const [authToken, setAuthToken] = useState('');
@@ -487,7 +489,7 @@ BlankPage = ({route}) => {
     })
       .then(response => response.text())
       .then(data => {
-        console.log('Device Added Successfully',data);
+        console.log('Device Added Successfully', data);
       })
       .catch(error => {
         console.error(error);

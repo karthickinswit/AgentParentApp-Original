@@ -20,17 +20,17 @@ import {
   Modal,
   Dimensions,
   Animated,
+  PermissionsAndroid
 } from 'react-native';
-import {useNavigation, StackActions} from '@react-navigation/native';
+import { useNavigation, StackActions } from '@react-navigation/native';
+import ImagePicker from 'react-native-image-picker';
+import { messageService } from '../services/websocket';
+const { height } = Dimensions.get('window');
+import { GlobalContext } from '../utils/globalupdate';
+import { timeConversion } from '../utils/utilities';
+import { MenuProvider } from 'react-native-popup-menu';
+import { closeChat } from '../services/api';
 
-
-import {messageService} from '../services/websocket';
-const {height} = Dimensions.get('window');
-import {GlobalContext} from '../utils/globalupdate';
-import {timeConversion} from '../utils/utilities';
-import {MenuProvider} from 'react-native-popup-menu';
-
-import {closeChat} from '../services/api';
 let flatList = React.useRef(null);
 
 const IndividualChat = route => {
@@ -39,8 +39,79 @@ const IndividualChat = route => {
   let chat = value.activeChatList.current.chats.find(response => {
     return response.chatId == chatId;
   });
+  const [imageSource, setImageSource] = React.useState(null);
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const [message, setMessage] = React.useState('');
 
-  let ChatHeader = () => {
+  const launchImagePicker = () => {
+    let options = {
+      title: 'You can choose one image',
+      maxWidth: 256,
+      maxHeight: 256,
+      noData: true,
+      mediaType: 'photo',
+      storageOptions: {
+        skipBackup: true,
+      },
+    };
+
+    ImagePicker.launchImageLibrary(options, response => {
+      if (response.didCancel) {
+        console.log('User cancelled photo picker');
+        Alert.alert('You did not select any image');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+        let source = { uri: response.uri };
+        // ADD THIS
+        setImageSource(source.uri);
+      }
+    });
+  }
+
+  const requestCameraPermission = async () => {
+    try {
+      setModalVisible(false);
+      const grantedCamera = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+        {
+          title: 'Cool Photo App Camera Permission',
+          message:
+            'Cool Photo App needs access to your camera ' +
+            'so you can take awesome pictures.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      const grantedStorage = await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+      ]);
+
+      if (
+        grantedCamera === PermissionsAndroid.RESULTS.GRANTED &&
+        grantedStorage[PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE] ===
+        PermissionsAndroid.RESULTS.GRANTED &&
+        grantedStorage[PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE] ===
+        PermissionsAndroid.RESULTS.GRANTED
+      ) {
+        console.log('You can use the camera and access the gallery');
+        setModalVisible(!modalVisible)
+        setTimeout(() => {
+          launchImagePicker()
+        }, 100);
+      } else {
+        console.log('Camera or gallery permission denied');
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const ChatHeader = () => {
     const navigation = useNavigation();
 
     if (!chat) {
@@ -48,7 +119,7 @@ const IndividualChat = route => {
     } else {
       return (
         <>
-          <SafeAreaView style={{backgroundColor: 'white'}}>
+          <SafeAreaView style={{ backgroundColor: 'white' }}>
             <View style={styles.container}>
               <TouchableOpacity
                 style={styles.backButton}
@@ -63,7 +134,7 @@ const IndividualChat = route => {
               <View style={styles.leftContainer}>
                 {chat.customerIconUrl ? (
                   <Image
-                    source={{uri: chat.customerIconUrl}}
+                    source={{ uri: chat.customerIconUrl }}
                     style={styles.avatar}
                   />
                 ) : (
@@ -103,10 +174,10 @@ const IndividualChat = route => {
     }
   };
 
-  let ChatBody = () => {
-    let renderMessage = ({item, index}) => {
+  const ChatBody = () => {
+    let renderMessage = ({ item, index }) => {
       return (
-        <View style={{flex: 1}}>
+        <View style={{ flex: 1 }}>
           <ScrollView>
             {item.actionType == 0 || item.actionType == 1 ? (
               <View style={styles.messageSent}>
@@ -172,16 +243,14 @@ const IndividualChat = route => {
       );
     } else {
       return (
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <ActivityIndicator size="large" color="#217eac" />
         </View>
       );
     }
   };
 
-  let ChatFooter = () => {
-    const [modalVisible, setModalVisible] = React.useState(false);
-    const [selectedImage, setSelectedImage] = React.useState(null);
+  const ChatFooter = () => {
 
     const openModal = () => {
       setModalVisible(true);
@@ -191,9 +260,7 @@ const IndividualChat = route => {
       setModalVisible(false);
     };
 
-    let [message, setMessage] = React.useState('');
-
-    let handleSendMessage = () => {
+    const handleSendMessage = () => {
       console.log(message);
       const sendObject = {
         action: 'agentReplyChat',
@@ -209,55 +276,11 @@ const IndividualChat = route => {
       setMessage('');
     };
 
-    const imageModal = () => {
-      const [modalVisible, setModalVisible] = useState(false);
-
-      const openModal = () => {
-        setModalVisible(true);
-      };
-
-      const closeModal = () => {
-        setModalVisible(false);
-      };
-
-      return (
-        <View style={styles.container}>
-          <Button title="Open Modal" onPress={openModal} />
-
-          <Modal
-            visible={modalVisible}
-            transparent={true}
-            animationType="slide"
-            onRequestClose={closeModal}>
-            <View style={styles.modalContainer}>
-              <View style={styles.modalContent}>
-                <TouchableOpacity
-                  style={styles.buttonModal}
-                  onPress={closeModal}>
-                  <Text style={styles.buttonTextModal}>Button 1</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.buttonModal}
-                  onPress={closeModal}>
-                  <Text style={styles.buttonTextModal}>Button 2</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.buttonModal}
-                  onPress={closeModal}>
-                  <Text style={styles.buttonTextModal}>Button 3</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Modal>
-        </View>
-      );
-    };
-
     return (
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <SafeAreaView style={{backgroundColor: 'white'}}>
+          <SafeAreaView style={{ backgroundColor: 'white' }}>
             <View style={styles.footercontainer}>
               {message.length > 0 ? null : (
                 <TouchableOpacity
@@ -295,7 +318,7 @@ const IndividualChat = route => {
                   <View style={styles.modalContent}>
                     <TouchableOpacity
                       style={styles.buttonModal}
-                      onPress={closeModal}>
+                      onPress={requestCameraPermission}>
                       <Text style={styles.buttonTextModal}>Photo/Video Library</Text>
                     </TouchableOpacity>
                     <TouchableOpacity

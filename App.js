@@ -68,7 +68,7 @@ export default function ChatParent() {
       // console.log('Device Token In App.js -----', deviceTokenRef.current);
       // console.log('data passsed', mobileType, deviceTokenRef.current);
       // fetch(
-      //   'https://8965-210-18-155-241.in.ngrok.io/MeOnCloud/e/enterprise/add_deviceId',
+      //   'https://76f4-210-18-155-241.in.ngrok.io/MeOnCloud/e/enterprise/add_deviceId',
       //   {
       //     method: 'PUT',
       //     headers: {
@@ -110,7 +110,7 @@ export default function ChatParent() {
     const token =
       'wuAqCJiMP/gudvC9sJW8oJ4xaJaNd90BCXCsmrcF1scfXZJCEMLuKFgxM9RtZPcl';
     const url =
-      'https://8965-210-18-155-241.in.ngrok.io/MeOnCloud/e/enterprise/add_deviceId';
+      'https://76f4-210-18-155-241.in.ngrok.io/MeOnCloud/e/enterprise/add_deviceId';
     const headers = {
       Accept: 'application/json',
       'Content-Type': 'application/json',
@@ -337,7 +337,7 @@ LoginScreen = () => {
     payload.appId = 'MOC';
 
     const LoginUri = await fetch(
-      `https://8965-210-18-155-241.in.ngrok.io/MeOnCloud/account/enterprise/login/twoFactorAuth?email=${encodeURIComponent(
+      `https://76f4-210-18-155-241.in.ngrok.io/MeOnCloud/account/enterprise/login/twoFactorAuth?email=${encodeURIComponent(
         payload.email,
       )}&&password=${encodeURIComponent(
         payload.password,
@@ -364,45 +364,47 @@ LoginScreen = () => {
   }
 
   return (
-    <View style={styles.container}>
-      <Image source={require('./assets/logo.png')} style={styles.logo} />
-      <TextInput
-        style={styles.input}
-        placeholder="User Id"
-        onChangeText={setUsername}
-        value={username}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        secureTextEntry={true}
-        onChangeText={setPassword}
-        value={password}
-      />
-      {isError ? (
-        <TouchableOpacity style={styles.submitButton2} onPress={handleRetry}>
-          <Text style={styles.submitButtonText}>
-            Invalid Credentials. Try Again!
-          </Text>
-        </TouchableOpacity>
-      ) : (
-        <TouchableOpacity
-          style={isSuccess ? styles.submitButton1 : styles.submitButton}
-          onPress={HandleLogin}>
-          <Text style={styles.submitButtonText}>
-            {isLoading ? (
-              <ActivityIndicator color="white" />
-            ) : isSuccess ? (
-              'Login Successful'
-            ) : isError ? (
-              'Error'
-            ) : (
-              'Login'
-            )}
-          </Text>
-        </TouchableOpacity>
-      )}
-    </View>
+    <>
+      <View style={styles.container}>
+        <Image source={require('./assets/logo.png')} style={styles.logo} />
+        <TextInput
+          style={styles.input}
+          placeholder="User Id"
+          onChangeText={setUsername}
+          value={username}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          secureTextEntry={true}
+          onChangeText={setPassword}
+          value={password}
+        />
+        {isError ? (
+          <TouchableOpacity style={styles.submitButton2} onPress={handleRetry}>
+            <Text style={styles.submitButtonText}>
+              Invalid Credentials. Try Again!
+            </Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            style={isSuccess ? styles.submitButton1 : styles.submitButton}
+            onPress={HandleLogin}>
+            <Text style={styles.submitButtonText}>
+              {isLoading ? (
+                <ActivityIndicator color="white" />
+              ) : isSuccess ? (
+                'Login Successful'
+              ) : isError ? (
+                'Error'
+              ) : (
+                'Login'
+              )}
+            </Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    </>
   );
 };
 
@@ -426,7 +428,7 @@ BlankPage = ({ route }) => {
     name: route.params.username,
     token: authToken,
     userId: route.params.uId,
-    baseUrl: 'https://8965-210-18-155-241.in.ngrok.io/MeOnCloud',
+    baseUrl: 'https://76f4-210-18-155-241.in.ngrok.io/MeOnCloud',
   };
 
   React.useEffect(() => {
@@ -468,7 +470,7 @@ BlankPage = ({ route }) => {
   };
 
   const addDeviceId = () => {
-    const apiUrl = `https://8965-210-18-155-241.in.ngrok.io/MeOnCloud/e/enterprise/add_deviceId`;
+    const apiUrl = `https://76f4-210-18-155-241.in.ngrok.io/MeOnCloud/e/enterprise/add_deviceId`;
     const requestBody = {
       deviceType:
         Platform.OS === 'android' ? 0 : Platform.OS === 'ios' ? 1 : null,

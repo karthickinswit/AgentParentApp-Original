@@ -10,19 +10,16 @@ import {
   TextInput,
   ScrollView,
   Alert,
-  RefreshControl,
   KeyboardAvoidingView,
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
   ActivityIndicator,
-  Button,
   Modal,
   Dimensions,
-  Animated,
   PermissionsAndroid
 } from 'react-native';
-import { useNavigation, StackActions } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import ImagePicker from 'react-native-image-picker';
 import { messageService } from '../services/websocket';
 const { height } = Dimensions.get('window');
@@ -71,7 +68,56 @@ const IndividualChat = route => {
     });
   }
 
+  const openCamera = () => {
+    ImagePicker.launchCamera({}, (response) => {
+      if (!response.didCancel) {
+        //setImageUri(response.uri);
+        setImageSource(source.uri);
+      }
+    });
+  };
+
   const requestCameraPermission = async () => {
+    try {
+      setModalVisible(false);
+      const grantedCamera = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+        {
+          title: 'Cool Photo App Camera Permission',
+          message:
+            'Cool Photo App needs access to your camera ' +
+            'so you can take awesome pictures.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      const grantedStorage = await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+      ]);
+
+      if (
+        grantedCamera === PermissionsAndroid.RESULTS.GRANTED &&
+        grantedStorage[PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE] ===
+        PermissionsAndroid.RESULTS.GRANTED &&
+        grantedStorage[PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE] ===
+        PermissionsAndroid.RESULTS.GRANTED
+      ) {
+        console.log('You can use the camera and access the gallery');
+        setModalVisible(!modalVisible)
+        setTimeout(() => {
+          openCamera()
+        }, 100);
+      } else {
+        console.log('Camera or gallery permission denied');
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const requestGalleryPermission = async () => {
     try {
       setModalVisible(false);
       const grantedCamera = await PermissionsAndroid.request(
@@ -318,18 +364,18 @@ const IndividualChat = route => {
                   <View style={styles.modalContent}>
                     <TouchableOpacity
                       style={styles.buttonModal}
-                      onPress={requestCameraPermission}>
+                      onPress={requestGalleryPermission}>
                       <Text style={styles.buttonTextModal}>Photo/Video Library</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.buttonModal}
+                      onPress={requestCameraPermission}>
+                      <Text style={styles.buttonTextModal}>Camera</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                       style={styles.buttonModal}
                       onPress={closeModal}>
                       <Text style={styles.buttonTextModal}>Location</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={styles.buttonModal}
-                      onPress={closeModal}>
-                      <Text style={styles.buttonTextModal}>Documents</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -462,7 +508,7 @@ let styles = StyleSheet.create({
   },
   messageSent: {
     backgroundColor: '#ecf6fd',
-    alignSelf: 'flex-end',
+    alignSelf: 'flex-start',
     maxWidth: '80%',
     borderRadius: 8,
     padding: 8,
@@ -478,7 +524,7 @@ let styles = StyleSheet.create({
   },
   messageReceived: {
     backgroundColor: '#FFFFFF',
-    alignSelf: 'flex-start',
+    alignSelf: 'flex-end',
     maxWidth: '80%',
     borderRadius: 8,
     padding: 8,
